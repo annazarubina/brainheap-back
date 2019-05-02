@@ -16,7 +16,7 @@ class ApplicationTests(@Autowired private val restTemplate: TestRestTemplate) {
 
 	@Test
 	fun findAll() {
-		val content = """[{"firstName":"Anna","lastName":"Zarubina","id":1},{"firstName":"Inna","lastName":"Ankudinova","id":2},{"firstName":"Alina","lastName":"Kisialiova","id":3},{"firstName":"Dmitrii","lastName":"Potoskuev","id":4},{"firstName":"Vyacheslav","lastName":"Semushin","id":5}]"""
+		val content = """[{"firstName":"Anna","lastName":"Zarubina"},{"firstName":"Inna","lastName":"Ankudinova"},{"firstName":"Alina","lastName":"Kisialiova"},{"firstName":"Dmitrii","lastName":"Potoskuev"},{"firstName":"Vyacheslav","lastName":"Semushin"]"""
 		assertEquals(content, restTemplate.getForObject<String>("/users"))
 	}
 
