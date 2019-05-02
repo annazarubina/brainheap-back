@@ -1,6 +1,7 @@
 package brainheap
 
 import brainheap.user.dto.UserDTO
+import com.google.gson.Gson
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertAll
@@ -11,16 +12,29 @@ import org.springframework.boot.test.context.SpringBootTest.WebEnvironment
 import org.springframework.boot.test.web.client.TestRestTemplate
 import org.springframework.boot.test.web.client.getForObject
 import org.springframework.test.context.junit.jupiter.SpringExtension
+import java.util.stream.Collectors
 
 @ExtendWith(SpringExtension::class)
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 class ApplicationTests(@Autowired private val restTemplate: TestRestTemplate) {
 
+    private var gson = Gson()
+
     @Test
     fun findAll() {
-        val users: List<UserDTO> = restTemplate.getForObject<List<UserDTO>>("/users").orEmpty()
-        assertAll("compare names",
-                { assertEquals(users.size, 5) }
+        val json = restTemplate.getForObject<String>("/users")
+        val users = gson.fromJson(json, Array<UserDTO>::class.java).asList()
+        assertAll("compare names and id should be unique",
+                { assertEquals(users.size, 5) },
+                { assertEquals(users[0].firstName, "Anna") },
+                { assertEquals(users[0].lastName, "Zarubina") },
+                {
+                    assertEquals(
+                            users
+                                    .map { it.id }
+                                    .stream()
+                                    .collect(Collectors.toSet())?.size, 5)
+                }
         )
     }
 
