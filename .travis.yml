@@ -1,0 +1,19 @@
+language: java
+jdk:
+  - openjdk11
+before_install:
+  - chmod +x gradlew
+  - chmod +x gradle/wrapper/gradle-wrapper.jar
+script:
+  - ./gradlew test build
+notifications:
+  slack:
+    on_success: change
+    on_failure: always
+  email:
+    recipients:
+      - innulic@mail.ru
+      - a.a.zarubina@gmail.com
+      - aflammaal@gmail.com
+    on_success: change
+    on_failure: always
