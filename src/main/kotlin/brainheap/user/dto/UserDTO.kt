@@ -1,5 +1,7 @@
 package brainheap.user.dto
 
+import org.hibernate.annotations.GenericGenerator
+import java.util.*
 import javax.persistence.*
 import javax.validation.constraints.NotEmpty
 
@@ -11,5 +13,7 @@ data class UserDTO(
         @field:NotEmpty
         val lastName: String,
         @Id
-        @GeneratedValue(strategy = GenerationType.AUTO)
-        val id: Long = -1)
+        @GeneratedValue(strategy = GenerationType.TABLE, generator="system-uuid")
+        @GenericGenerator(name="system-uuid", strategy = "uuid")
+        val id: String = ""
+)

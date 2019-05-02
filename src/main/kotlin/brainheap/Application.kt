@@ -28,15 +28,6 @@ class Application {
 			repository.findAll().forEach { log.info(it.toString()) }
 			log.info("")
 
-			// fetch an individual customer by ID
-			val customer = repository.findById(1L)
-			customer.ifPresent {
-				log.info("UserDTO found with findById(1L):")
-				log.info("--------------------------------")
-				log.info(it.toString())
-				log.info("")
-			}
-
 			// fetch customers by last name
 			log.info("UserDTO found with findByTitle('Semushin'):")
 			log.info("--------------------------------------------")

@@ -34,7 +34,7 @@ class ItemController(private val repository: ItemRepository) {
     }
 
     @PutMapping("/items/{id}")
-    fun update(@PathVariable id: Long, @RequestBody item: Item): ResponseEntity<ItemDTO> {
+    fun update(@PathVariable id: String, @RequestBody item: Item): ResponseEntity<ItemDTO> {
         return repository.findById(id)
                 .map {
                     ResponseEntity(repository.save(ItemProcessor.update(it, item)), HttpStatus.OK)
@@ -42,14 +42,14 @@ class ItemController(private val repository: ItemRepository) {
     }
 
     @DeleteMapping("/items/{id}")
-    fun delete(@PathVariable id: Long): ResponseEntity<ItemDTO> {
+    fun delete(@PathVariable id: String): ResponseEntity<ItemDTO> {
         return repository.findById(id)
                 .map { ResponseEntity(deleteItem(it), HttpStatus.OK) }
                 .orElse(ResponseEntity(HttpStatus.NOT_FOUND))
     }
 
     @GetMapping("/items/{id}")
-    fun get(@PathVariable id: Long): ResponseEntity<ItemDTO> {
+    fun get(@PathVariable id: String): ResponseEntity<ItemDTO> {
         return repository.findById(id)
                 .map { ResponseEntity(it, HttpStatus.OK) }
                 .orElse(ResponseEntity(HttpStatus.NOT_FOUND))
