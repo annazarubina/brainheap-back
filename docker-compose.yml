@@ -1,0 +1,25 @@
+version: '3'
+services:
+  brainheap-back:
+    build: .
+    container_name: "brainheap-back"
+    image: debian/latest
+    restart: always
+    ports:
+      - 8080:8080
+    links:
+      - brainheap-mongodb
+    depends_on:
+      - brainheap-mongodb
+  brainheap-mongodb:
+    image: mongo:latest
+    container_name: "brainheap-mongodb"
+    restart: always
+    environment:
+      - MONGO_DATA_DIR=/data/db
+      - MONGO_LOG_DIR=/dev/null
+    volumes:
+      - ./data/db:/data/db
+    ports:
+      - 27017:27017
+    command: mongod --smallfiles --logpath=/dev/null

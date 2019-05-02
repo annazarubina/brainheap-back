@@ -2,10 +2,11 @@ language: java
 jdk:
   - openjdk11
 before_install:
-  - chmod +x gradlew
-  - chmod +x gradle/wrapper/gradle-wrapper.jar
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
 script:
   - ./gradlew test build
+services:
+  - docker
 notifications:
   slack:
     on_success: change
@@ -17,3 +18,12 @@ notifications:
       - aflammaal@gmail.com
     on_success: change
     on_failure: always
+after_success:
+  - docker build -t innulic/brain-heap .
+  - docker images
+  - docker push innulic/brain-heap:latest
+after_failure:
+addons:
+  apt:
+    packages:
+      - docker-ce
