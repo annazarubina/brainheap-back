@@ -22,6 +22,7 @@ notifications:
     on_failure: always
 after_success:
   - docker build -t kgb/brainheap-back .
+  - docker images
   - docker push innulic/brain-heap
 after_failure:
 addons:
