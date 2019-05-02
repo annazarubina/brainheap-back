@@ -1,6 +1,6 @@
-package brainheap.repos
+package brainheap.user.repo
 
-import brainheap.dto.UserDTO
+import brainheap.user.dto.UserDTO
 import org.springframework.data.repository.CrudRepository
 
 interface UserRepository : CrudRepository<UserDTO, Long> {

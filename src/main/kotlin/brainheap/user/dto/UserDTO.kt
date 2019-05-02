@@ -1,4 +1,4 @@
-package brainheap.dto
+package brainheap.user.dto
 
 import javax.persistence.*
 import javax.validation.constraints.NotEmpty

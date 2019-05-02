@@ -1,8 +1,8 @@
-package brainheap.rest
+package brainheap.user.rest
 
-import brainheap.models.User
-import brainheap.repos.UserRepository
-import brainheap.rest.converters.UserConverter
+import brainheap.user.model.User
+import brainheap.user.repo.UserRepository
+import brainheap.user.rest.converters.UserConverter
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
 

@@ -1,7 +1,6 @@
-package brainheap.repos
+package brainheap.item.repo
 
-import brainheap.dto.ItemDTO
-import brainheap.dto.UserDTO
+import brainheap.item.dto.ItemDTO
 import org.springframework.data.repository.CrudRepository
 
 interface ItemRepository : CrudRepository<ItemDTO, Long> {

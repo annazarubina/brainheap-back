@@ -1,7 +1,7 @@
-package brainheap.rest.converters
+package brainheap.user.rest.converters
 
-import brainheap.dto.UserDTO
-import brainheap.models.User
+import brainheap.user.dto.UserDTO
+import brainheap.user.model.User
 
 object UserConverter {
     fun convert(item: User): UserDTO {

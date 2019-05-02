@@ -1,4 +1,4 @@
-package brainheap.dto
+package brainheap.item.dto
 
 import java.util.*
 import javax.persistence.*

@@ -1,4 +1,4 @@
-package brainheap.models
+package brainheap.item.model
 
 import javax.validation.constraints.NotEmpty
 import javax.validation.constraints.NotNull

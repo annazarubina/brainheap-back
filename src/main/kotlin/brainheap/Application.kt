@@ -1,7 +1,7 @@
 package brainheap
 
-import brainheap.dto.UserDTO
-import brainheap.repos.UserRepository
+import brainheap.user.dto.UserDTO
+import brainheap.user.repo.UserRepository
 import org.slf4j.LoggerFactory
 import org.springframework.boot.CommandLineRunner
 import org.springframework.boot.autoconfigure.SpringBootApplication

@@ -1,7 +1,7 @@
-package brainheap.rest.converters
+package brainheap.item.rest.converters
 
-import brainheap.dto.ItemDTO
-import brainheap.models.Item
+import brainheap.item.dto.ItemDTO
+import brainheap.item.model.Item
 import java.util.*
 
 object ItemConverter {

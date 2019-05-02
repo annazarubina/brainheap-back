@@ -1,9 +1,9 @@
-package brainheap.rest
+package brainheap.item.rest
 
-import brainheap.dto.ItemDTO
-import brainheap.models.Item
-import brainheap.repos.ItemRepository
-import brainheap.rest.converters.ItemConverter
+import brainheap.item.dto.ItemDTO
+import brainheap.item.model.Item
+import brainheap.item.repo.ItemRepository
+import brainheap.item.rest.converters.ItemConverter
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
@@ -55,8 +55,8 @@ class ItemController(private val repository: ItemRepository) {
                 .orElse(ResponseEntity(HttpStatus.NOT_FOUND))
     }
 
-    @GetMapping("/items/find/{title}")
-    fun findByTitle(@PathVariable title: String): ResponseEntity<List<ItemDTO>> {
+    @GetMapping("/items/find")
+    fun findByTitle(@RequestParam title: String): ResponseEntity<List<ItemDTO>> {
         return Optional.ofNullable(repository.findByTitle(title)
                 .toList()
                 .takeIf { !it.isEmpty() }
