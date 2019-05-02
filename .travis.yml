@@ -2,8 +2,6 @@ language: java
 jdk:
   - openjdk11
 before_install:
-  - chmod +x gradlew
-  - chmod +x gradle/wrapper/gradle-wrapper.jar
   - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
 script:
   - ./gradlew test build
