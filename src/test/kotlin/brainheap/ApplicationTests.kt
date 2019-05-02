@@ -1,6 +1,6 @@
 package brainheap
 
-import brainheap.user.dto.UserDTO
+import brainheap.user.model.User
 import com.google.gson.Gson
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
@@ -23,7 +23,7 @@ class ApplicationTests(@Autowired private val restTemplate: TestRestTemplate) {
     @Test
     fun findAll() {
         val json = restTemplate.getForObject<String>("/users")
-        val users = gson.fromJson(json, Array<UserDTO>::class.java).asList()
+        val users = gson.fromJson(json, Array<User>::class.java).asList()
         assertAll("compare names and id should be unique",
                 { assertEquals(users.size, 5) },
                 { assertEquals(users[0].firstName, "Anna") },

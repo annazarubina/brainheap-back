@@ -1,9 +1,9 @@
 package brainheap.item.rest
 
-import brainheap.item.dto.ItemDTO
 import brainheap.item.model.Item
+import brainheap.item.rest.view.ItemView
 import brainheap.item.repo.ItemRepository
-import brainheap.item.dto.processors.ItemProcessor
+import brainheap.item.model.processors.ItemProcessor
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
@@ -13,19 +13,19 @@ import java.util.*
 class ItemController(private val repository: ItemRepository) {
 
     @GetMapping("/items")
-    fun getAll() : ResponseEntity<List<ItemDTO>> {
+    fun getAll() : ResponseEntity<List<Item>> {
         return ResponseEntity(repository.findAll().toList(), HttpStatus.OK)
     }
 
     @PostMapping("/items")
-    fun create(@RequestBody item: Item): ResponseEntity<ItemDTO> {
-        return ResponseEntity(repository.save(ItemProcessor.convert(item)), HttpStatus.CREATED)
+    fun create(@RequestBody itemView: ItemView): ResponseEntity<Item> {
+        return ResponseEntity(repository.save(ItemProcessor.convert(itemView)), HttpStatus.CREATED)
     }
 
     @PostMapping("/items/list")
-    fun createAll(@RequestBody items: List<Item>): ResponseEntity<List<ItemDTO>> {
+    fun createAll(@RequestBody itemViews: List<ItemView>): ResponseEntity<List<Item>> {
         return Optional.ofNullable(
-                items
+                itemViews
                         .map { repository.save(ItemProcessor.convert(it)) }
                         .takeIf { !it.isEmpty() }
         )
@@ -34,29 +34,29 @@ class ItemController(private val repository: ItemRepository) {
     }
 
     @PutMapping("/items/{id}")
-    fun update(@PathVariable id: String, @RequestBody item: Item): ResponseEntity<ItemDTO> {
+    fun update(@PathVariable id: String, @RequestBody itemView: ItemView): ResponseEntity<Item> {
         return repository.findById(id)
                 .map {
-                    ResponseEntity(repository.save(ItemProcessor.update(it, item)), HttpStatus.OK)
+                    ResponseEntity(repository.save(ItemProcessor.update(it, itemView)), HttpStatus.OK)
                 }.orElse(ResponseEntity(HttpStatus.NOT_FOUND))
     }
 
     @DeleteMapping("/items/{id}")
-    fun delete(@PathVariable id: String): ResponseEntity<ItemDTO> {
+    fun delete(@PathVariable id: String): ResponseEntity<Item> {
         return repository.findById(id)
                 .map { ResponseEntity(deleteItem(it), HttpStatus.OK) }
                 .orElse(ResponseEntity(HttpStatus.NOT_FOUND))
     }
 
     @GetMapping("/items/{id}")
-    fun get(@PathVariable id: String): ResponseEntity<ItemDTO> {
+    fun get(@PathVariable id: String): ResponseEntity<Item> {
         return repository.findById(id)
                 .map { ResponseEntity(it, HttpStatus.OK) }
                 .orElse(ResponseEntity(HttpStatus.NOT_FOUND))
     }
 
     @GetMapping("/items/find")
-    fun findByTitle(@RequestParam title: String): ResponseEntity<List<ItemDTO>> {
+    fun findByTitle(@RequestParam title: String): ResponseEntity<List<Item>> {
         return Optional.ofNullable(repository.findByTitle(title)
                 .toList()
                 .takeIf { !it.isEmpty() }
@@ -65,7 +65,7 @@ class ItemController(private val repository: ItemRepository) {
                 .orElse(ResponseEntity(HttpStatus.NOT_FOUND))
     }
 
-    private fun deleteItem(item: ItemDTO): ItemDTO {
+    private fun deleteItem(item: Item): Item {
         repository.deleteById(item.id)
         return item
     }

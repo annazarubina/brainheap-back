@@ -1,8 +1,8 @@
 package brainheap.user.rest
 
-import brainheap.user.model.User
+import brainheap.user.rest.view.UserView
 import brainheap.user.repo.UserRepository
-import brainheap.user.dto.processors.UserProcessor
+import brainheap.user.model.processors.UserProcessor
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
 
@@ -14,7 +14,7 @@ class UserController(private val repository: UserRepository) {
 
     @PostMapping("/users")
     @ResponseStatus (HttpStatus.CREATED)
-    fun create(@RequestBody user: User) {
+    fun create(@RequestBody user: UserView) {
         repository.save(UserProcessor.convert(user))
     }
 

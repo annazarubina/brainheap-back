@@ -1,9 +1,9 @@
 package brainheap.user.repo
 
-import brainheap.user.dto.UserDTO
+import brainheap.user.model.User
 import org.springframework.data.repository.CrudRepository
 
-interface UserRepository : CrudRepository<UserDTO, String> {
+interface UserRepository : CrudRepository<User, String> {
 
-	fun findByLastName(lastName: String): Iterable<UserDTO>
+	fun findByLastName(lastName: String): Iterable<User>
 }
