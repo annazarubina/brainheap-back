@@ -3,7 +3,6 @@ services:
   brainheap-back:
     build: .
     container_name: "brainheap-back"
-    image: debian/latest
     restart: always
     ports:
       - 8080:8080
