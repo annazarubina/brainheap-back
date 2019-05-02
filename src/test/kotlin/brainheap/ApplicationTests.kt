@@ -1,7 +1,7 @@
 package brainheap
 
 import brainheap.user.model.User
-import com.google.gson.Gson
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertAll
@@ -18,12 +18,10 @@ import java.util.stream.Collectors
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 class ApplicationTests(@Autowired private val restTemplate: TestRestTemplate) {
 
-    private var gson = Gson()
-
     @Test
     fun findAll() {
         val json = restTemplate.getForObject<String>("/users")
-        val users = gson.fromJson(json, Array<User>::class.java).asList()
+        val users = jacksonObjectMapper().readValue(json, Array<User>::class.java).asList()
         assertAll("compare names and id should be unique",
                 { assertEquals(users.size, 5) },
                 { assertEquals(users[0].firstName, "Anna") },
