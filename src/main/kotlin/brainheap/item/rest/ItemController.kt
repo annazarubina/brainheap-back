@@ -3,7 +3,7 @@ package brainheap.item.rest
 import brainheap.item.dto.ItemDTO
 import brainheap.item.model.Item
 import brainheap.item.repo.ItemRepository
-import brainheap.item.rest.converters.ItemConverter
+import brainheap.item.dto.processors.ItemProcessor
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
@@ -19,14 +19,14 @@ class ItemController(private val repository: ItemRepository) {
 
     @PostMapping("/items")
     fun create(@RequestBody item: Item): ResponseEntity<ItemDTO> {
-        return ResponseEntity(repository.save(ItemConverter.convert(item)), HttpStatus.CREATED)
+        return ResponseEntity(repository.save(ItemProcessor.convert(item)), HttpStatus.CREATED)
     }
 
     @PostMapping("/items/list")
     fun createAll(@RequestBody items: List<Item>): ResponseEntity<List<ItemDTO>> {
         return Optional.ofNullable(
                 items
-                        .map { repository.save(ItemConverter.convert(it)) }
+                        .map { repository.save(ItemProcessor.convert(it)) }
                         .takeIf { !it.isEmpty() }
         )
                 .map { ResponseEntity(it, HttpStatus.OK) }
@@ -37,7 +37,7 @@ class ItemController(private val repository: ItemRepository) {
     fun update(@PathVariable id: Long, @RequestBody item: Item): ResponseEntity<ItemDTO> {
         return repository.findById(id)
                 .map {
-                    ResponseEntity(repository.save(ItemConverter.update(it, item)), HttpStatus.OK)
+                    ResponseEntity(repository.save(ItemProcessor.update(it, item)), HttpStatus.OK)
                 }.orElse(ResponseEntity(HttpStatus.NOT_FOUND))
     }
 

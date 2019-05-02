@@ -1,10 +1,10 @@
-package brainheap.item.rest.converters
+package brainheap.item.dto.processors
 
 import brainheap.item.dto.ItemDTO
 import brainheap.item.model.Item
 import java.util.*
 
-object ItemConverter {
+object ItemProcessor {
     fun convert(item: Item): ItemDTO {
         val time: Date = Calendar.getInstance().time
         return ItemDTO(item.title, item.description, time, time)
