@@ -2,7 +2,7 @@
 
 The goal of this project is to create an application, which will help people to extend their english vocabulary.
 
-[![Build Status](https://travis-ci.com/annazarubina/brainheap-back.svg?branch=master)](https://travis-ci.com/annazarubina/brainheap-back)
+[![Build Status](https://travis-ci.org/annazarubina/brainheap-back.svg?branch=master)](https://travis-ci.org/annazarubina/brainheap-back)
 
 **How run it locally**
 
