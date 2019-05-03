@@ -4,7 +4,7 @@ import javax.validation.constraints.NotEmpty
 
 data class UserView(
         @field:NotEmpty
-        val firstName: String,
+        val name: String,
         @field:NotEmpty
-        val lastName: String
+        val email: String
 )

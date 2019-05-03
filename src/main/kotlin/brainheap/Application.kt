@@ -16,11 +16,11 @@ class Application {
 	@Bean
 	fun init(repository: UserRepository) = CommandLineRunner {
 			// save a couple of customers
-			repository.save(User("Anna", "Zarubina"))
-			repository.save(User("Inna", "Ankudinova"))
-			repository.save(User("Alina", "Kisialiova"))
-			repository.save(User("Dmitrii", "Potoskuev"))
-			repository.save(User("Vyacheslav", "Semushin"))
+			repository.save(User("Anna Zarubina", "a.a.zarubina@gmail.com"))
+			repository.save(User("Inna Ankudinova", "innulic@mail.ru"))
+			repository.save(User("Alina Kisialiova", "aflammaal@gmail.com"))
+			repository.save(User("Dmitrii Potoskuev","d@d.d"))
+			repository.save(User("Vyacheslav Semushin", "s@s.s"))
 
 			// fetch all customers
 			log.info("Customers found with findAll():")
@@ -29,9 +29,9 @@ class Application {
 			log.info("")
 
 			// fetch customers by last name
-			log.info("User found with findByTitle('Semushin'):")
+			log.info("User found with email('\"a.a.zarubina@gmail.com\"'):")
 			log.info("--------------------------------------------")
-			repository.findByLastName("Bauer").forEach { log.info(it.toString()) }
+			repository.findByEmail("a.a.zarubina@gmail.com").forEach { log.info(it.toString()) }
 			log.info("")
 	}
 

@@ -8,9 +8,9 @@ import javax.validation.constraints.NotEmpty
 @Table(name = "users")
 data class User(
         @field:NotEmpty
-        val firstName: String,
+        val name: String,
         @field:NotEmpty
-        val lastName: String,
+        val email: String,
         @Id
         @GeneratedValue(strategy = GenerationType.TABLE, generator="system-uuid")
         @GenericGenerator(name="system-uuid", strategy = "uuid")

@@ -25,8 +25,8 @@ class ApplicationTests(@Autowired private val restTemplate: TestRestTemplate) {
         val users = jacksonObjectMapper().readValue(json, Array<User>::class.java).asList()
         assertAll("compare names and id should be unique",
                 { assertEquals(users.size, 5) },
-                { assertEquals(users[0].firstName, "Anna") },
-                { assertEquals(users[0].lastName, "Zarubina") },
+                { assertEquals(users[0].name, "Anna Zarubina") },
+                { assertEquals(users[0].email, "a.a.zarubina@gmail.com") },
                 {
                     assertEquals(
                             users
