@@ -16,6 +16,7 @@ after_success:
 - docker images
 - docker inspect registry.heroku.com/brain-heap/web --format={{.Id}}
 - docker push registry.heroku.com/brain-heap/web:latest
+- notify_heroku.sh
 after_failure:
 - cat target/surefire-reports/*.txt
 notifications:
