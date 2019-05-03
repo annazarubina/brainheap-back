@@ -18,9 +18,6 @@ after_success:
 after_failure:
   - cat target/surefire-reports/*.txt
 notifications:
-  slack: neueda-technologies:ZYh2b6u5OcMbhwMu6i9U47fQ
-    on_success: change
-    on_failure: always
   email:
     recipients:
       - innulic@mail.ru
