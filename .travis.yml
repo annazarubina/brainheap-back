@@ -21,7 +21,7 @@ deploy:
   provider: heroku
   app: brain-heap
   on:
-    repo: annazarubina/brainheap-back
+    repo: innulic/brainheap-back
   api_key:
     secure: RfUsZ3P9506K5vfmnNeg4DlrAFrHEHCGm4Iyrm9LlYcJamXAT1/DxqzCQaXYE/u5xJiYNkCMS7BUImYu9ao0E6F6kymm6LyiS9vXWaUM/lxc8Ll7feLs1PGHwWUlqoCb/XEj7oBEPJjaCSVu7VZZDPStl2YiRNWa/TPdROeQWvzJUHzKAin2NH+yIgzETyypl0NIqPhrK26WmE3zecg+fsb5QN9XJZWca5gtRBdTLBkOsUcC5X3HAO78bGFXR1iZ8S+VzGJ5O+kHDsADXuKIAChMg5VIABtYPsg5H72NopOeTCISadrUPaLQAm6+HZjARYkH7g+2vMYyc3MKzPtwJ005OzFzyhEclIKlpTmGNgQaL0OE4CrZEvAtvOW9q1B3KfwgIUHLrhCbuupf2ISa0T820cNZ1E8YDt+6+DwUJ7nEft9anDpneY83a9nBHFrcpY+3M3X1iezqSA1wJSrgtSLZmSiX7XWoCAlF4rIEB6nQ/peZkSD04H7sY38tCLA21Mr/p2sBmtG2dom35FCft/bW1R5E5A9QhIDZI2kjKb/Yi6qZkc3rDIelrQ9GhZ/GBpnrz1pgG2fNK0h8aoGlKU7FFK8IFxGKSCKZKbpomrSzSjpBrb0AEk/cgur9wqBSdzhjUKV2Owd95hzpJipMIQCjTnyNxVNhDxp/4XOOFqA=
 notifications:
