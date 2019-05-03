@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
-import java.util.*
 import javax.validation.Valid
 
 @Validated
@@ -24,62 +23,44 @@ import javax.validation.Valid
 class ItemController(private val repository: ItemRepository) {
 
     @GetMapping("/items")
-    fun getAll(@RequestHeader(value = "Authorization", required = false) userId: String?): ResponseEntity<List<Item>> {
-        return Optional.ofNullable(repository.findAll()
-                .filter { userId.orEmpty().isEmpty() || it.userId == userId }
-                .takeIf { !it.isEmpty() }
-        )
-                .map { ResponseEntity(it, HttpStatus.OK) }
-                .orElse(ResponseEntity(HttpStatus.NOT_FOUND))
-    }
+    fun getAll(@RequestHeader(value = "Authorization", required = false) userId: String?): ResponseEntity<List<Item>> =
+            (userId?.let { repository.findByUserId(userId) } ?: repository.findAll().toList())
+                    .takeIf { !it.isEmpty() }
+                    ?.let { ResponseEntity(it, HttpStatus.OK) } ?: ResponseEntity(HttpStatus.NOT_FOUND)
 
     @PostMapping("/items")
-    fun create(@RequestHeader(value = "Authorization") userId: String, @Valid @RequestBody itemView: ItemView): ResponseEntity<Item> {
-        return ResponseEntity(repository.save(ItemProcessor.convert(itemView, userId)), HttpStatus.CREATED)
-    }
+    fun create(@RequestHeader(value = "Authorization") userId: String, @Valid @RequestBody itemView: ItemView): ResponseEntity<Item> =
+            ResponseEntity(repository.save(ItemProcessor.convert(itemView, userId)), HttpStatus.CREATED)
 
     @PostMapping("/items/list")
-    fun createAll(@RequestHeader(value = "Authorization") userId: String, @Valid @RequestBody itemViews: List<ItemView>): ResponseEntity<List<Item>> {
-        return Optional.ofNullable(
-                itemViews
-                        .map { repository.save(ItemProcessor.convert(it, userId)) }
-                        .takeIf { !it.isEmpty() }
-        )
-                .map { ResponseEntity(it, HttpStatus.OK) }
-                .orElse(ResponseEntity(HttpStatus.NOT_FOUND))
-    }
+    fun createAll(@RequestHeader(value = "Authorization") userId: String,
+                  @Valid @RequestBody itemViews: List<ItemView>): ResponseEntity<List<Item>> =
+            itemViews.map { repository.save(ItemProcessor.convert(it, userId)) }
+                    .takeIf { !it.isEmpty() }
+                    ?.let { ResponseEntity(it, HttpStatus.OK) } ?: ResponseEntity(HttpStatus.NOT_FOUND)
 
     @PutMapping("/items/{id}")
-    fun update(@RequestHeader(value = "Authorization") userId: String, @PathVariable id: String, @Valid @RequestBody itemView: ItemView): ResponseEntity<Item> {
-        return repository.findById(id)
-                .map {
-                    ResponseEntity(repository.save(ItemProcessor.update(it, itemView, userId)), HttpStatus.OK)
-                }.orElse(ResponseEntity(HttpStatus.NOT_FOUND))
-    }
+    fun update(@RequestHeader(value = "Authorization") userId: String, @PathVariable id: String,
+               @Valid @RequestBody itemView: ItemView): ResponseEntity<Item> =
+            repository.findById(id).orElse(null)
+                    ?.let { ResponseEntity(it, HttpStatus.OK) } ?: ResponseEntity(HttpStatus.NOT_FOUND)
 
     @DeleteMapping("/items/{id}")
-    fun delete(@PathVariable id: String): ResponseEntity<Item> {
-        return repository.findById(id)
-                .map { ResponseEntity(deleteItem(it), HttpStatus.OK) }
-                .orElse(ResponseEntity(HttpStatus.NOT_FOUND))
-    }
+    fun delete(@PathVariable id: String): ResponseEntity<Item> =
+            repository.findById(id).orElse(null)
+                    ?.let { ResponseEntity(deleteItem(it), HttpStatus.OK) } ?: ResponseEntity(HttpStatus.NOT_FOUND)
 
     @GetMapping("/items/{id}")
-    fun get(@PathVariable id: String): ResponseEntity<Item> {
-        return repository.findById(id)
-                .map { ResponseEntity(it, HttpStatus.OK) }
-                .orElse(ResponseEntity(HttpStatus.NOT_FOUND))
-    }
+    fun get(@PathVariable id: String): ResponseEntity<Item> =
+            repository.findById(id).orElse(null)
+                    ?.let { ResponseEntity(it, HttpStatus.OK) } ?: ResponseEntity(HttpStatus.NOT_FOUND)
 
     @GetMapping("/items/find")
-    fun findByTitle(@RequestHeader(value = "Authorization", required = false) userId: String?, @RequestParam title: String): ResponseEntity<List<Item>> {
-        return Optional.ofNullable(repository.findByTitle(title)
-                .filter { userId.orEmpty().isEmpty() || it.userId == userId }
-                .takeIf { !it.isEmpty() }
-        )
-                .map { ResponseEntity(it, HttpStatus.OK) }
-                .orElse(ResponseEntity(HttpStatus.NOT_FOUND))
-    }
+    fun findByTitle(@RequestHeader(value = "Authorization", required = false) userId: String?,
+                    @RequestParam title: String): ResponseEntity<List<Item>> =
+            (userId?.let { repository.findByTitleAndUserId(title, userId) } ?: repository.findByTitle(title))
+                    .takeIf { !it.isEmpty() }
+                    ?.let { ResponseEntity(it, HttpStatus.OK) } ?: ResponseEntity(HttpStatus.NOT_FOUND)
 
     private fun deleteItem(item: Item): Item {
         repository.deleteById(item.id)
