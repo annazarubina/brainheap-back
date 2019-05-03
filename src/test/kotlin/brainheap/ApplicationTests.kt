@@ -35,7 +35,6 @@ class ApplicationTests(@Autowired private val restTemplate: TestRestTemplate) {
                                     .collect(Collectors.toSet())?.size, 5)
                 }
         )
-        fail<String>("Failed. Because we want to see the logs")
     }
 
 }
