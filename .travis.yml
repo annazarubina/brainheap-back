@@ -1,0 +1,32 @@
+language: java
+jdk:
+- openjdk11
+services:
+- docker
+before_install:
+- echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+addons:
+  apt:
+    packages:
+    - docker-ce
+script:
+- "./gradlew test build"
+after_success:
+- docker build -t innulic/brain-heap .
+- docker images
+- docker push innulic/brain-heap:latest
+after_failure:
+- cat target/surefire-reports/*.txt
+notifications:
+  slack: neueda-technologies:ZYh2b6u5OcMbhwMu6i9U47fQ
+  email:
+    recipients:
+    - innulic@mail.ru
+    - a.a.zarubina@gmail.com
+    - aflammaal@gmail.com
+    on_success: change
+    on_failure: always
+env:
+  matrix:
+  - secure: v8hLy11EQVWXh3GnGrMdfU2b5za+q6sH1u7euaITed57nyQ4siUanG4mQf8QSabuROXTqzK5JrXk3t/x7Xm4bIbAHoFSWXNSyFtEMp+7YZjOlbW++DYBrxlnO2sbYcFybP5lmwhSpiW/X7vfcpSzKWfh2CylcGPLUJYGuXXDJX2paCPepyOLsO51OIXD5MFLBplB7qHCSkbpa1qFUKMQMMbaIV6Rbt5HOMSWrlxOQWTGqjkSWsmxze14uScHemvtBiGX87296M/uYlnXvOqLhgOZefJd5B7KV/FTh4oNEMWomF6HydPmlFbj0UYnK7NtMuCU5s3equbylSUluF/WM9sYf1X3OskbGF6FoQ8AhWbGf5KQ3QWivcOE+lUo9GSwK/zB40B4fuhLwGqwEDeobJ+KxtzoXmbgDbYdlbfNCFcbn42ean4Y+TZ3NhvqHUK8Gw81j8DGEctpws4erSkupoUO6MT1WahDUlqAJTeeL1INdXRvtajGH/FzvP3UqCkLOTKRaAR4B0FoV7wR9OsWsx7mU2jXxYe0WmIRgBkXXTBD8v3aNrFJr0KTJ28WR2KS4u79dlnDcysHPWFzGc5vfn3Ki0FmIxNG+ndy8RDb47eZUyEe62Ls0MT3obc2og0Uus76DW1+zZ7dizRMPQ1HF3FhrYNHbyxzS9gaRwFx/lc=
+  - secure: DnzxYjiCTK1uuQkPfMHYBi090uySqBM0zsQyUa/aPeyx0sY1Z7GieEkUBtjaEpCA32lmmridwpy9axk9i+LI0MZhJJPn2YWCirH2boiG7i0pFIbw9xnaTwh25S083PTgMLpu8yeRgjCLFUA9UGQL8iKgDstNNjtpgZVaG3GIVO4QSnyGsbCPD0YruD8o5VvxtbSXs9LMyIYxcDHaj+/m40hXxDVOejBr6qyez0D1bnUC98sGHWgiN7cSGXwxi/Nt2F0laOr/BYvJy58weGNl5X2sdbi81Hs4axwb/7+q1uGLdB5ImrTx3gEexo0KhbAVp9zr/nt1qlrimAhUjt8w4tRqPL/PSeJeCC5wl0PWcB8N0+EtFepgxEM/i7bSOMQIT3pcN/FnVE0vXBB00ae8B16kzymGFddB7r6sLMwxQvc9dshhowMw5gutmlwY4g253oPja2VL2Gv0LvMxA3F7rQmdYVwGD9NYMHDW3GnghEgJCbdnEAV7itDVP+KXBb3oT2EsJ+QF+yukMJoXIBifvdJbKBB0noCuPIByDGjzjl4ud5mNN/f83qpzs57LJhtdlJ4vFUUzsYf79+kt+9KU1b92tYQD4Pe57OKJxD39RWLsuk2IUiX+KZDYOnZSXbW0Ixv476PTgY8QXmRgyhn66JVkhHww+ZA+IzllI5bk8Qg=
