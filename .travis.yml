@@ -5,9 +5,12 @@ addons:
   apt:
     packages:
     - docker-ce
+before_install:
 script:
 - "./gradlew test build"
 after_success:
+- heroku container:push web -a brain-heap
+- heroku container:release web -a brain-heap
 after_failure:
 - cat target/surefire-reports/*.txt
 notifications:
