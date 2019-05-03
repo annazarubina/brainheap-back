@@ -14,9 +14,11 @@ import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
+import org.springframework.validation.annotation.Validated
 import java.util.*
 import javax.validation.Valid
 
+@Validated
 @RestController
 class ItemController(private val repository: ItemRepository) {
 
@@ -31,7 +33,7 @@ class ItemController(private val repository: ItemRepository) {
     }
 
     @PostMapping("/items/list")
-    fun createAll(@RequestBody itemViews: List<ItemView>): ResponseEntity<List<Item>> {
+    fun createAll(@Valid @RequestBody itemViews: List<ItemView>): ResponseEntity<List<Item>> {
         return Optional.ofNullable(
                 itemViews
                         .map { repository.save(ItemProcessor.convert(it)) }
