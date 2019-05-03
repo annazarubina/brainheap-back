@@ -12,10 +12,10 @@ addons:
 script:
 - "./gradlew test build"
 after_success:
-- docker build -t registry.heroku.com/brain-heap .
+- docker build -t registry.heroku.com/brain-heap/web .
 - docker images
-- docker inspect registry.heroku.com/brain-heap --format={{.Id}}
-- docker push registry.heroku.com/brain-heap:latest
+- docker inspect registry.heroku.com/brain-heap/web --format={{.Id}}
+- docker push registry.heroku.com/brain-heap/web:latest
 after_failure:
 - cat target/surefire-reports/*.txt
 notifications:
