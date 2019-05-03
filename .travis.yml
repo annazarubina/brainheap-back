@@ -1,3 +1,4 @@
+# Init configuration
 language: java
 jdk:
   - openjdk11
@@ -9,6 +10,7 @@ addons:
   apt:
     packages:
       - docker-ce
+# Build phase
 script:
   - ./gradlew test build
 after_success:
@@ -17,7 +19,9 @@ after_success:
   - docker push innulic/brain-heap:latest
 after_failure:
   - cat target/surefire-reports/*.txt
+# Setup notification
 notifications:
+  slack: neueda-technologies:ZYh2b6u5OcMbhwMu6i9U47fQ
   email:
     recipients:
       - innulic@mail.ru
