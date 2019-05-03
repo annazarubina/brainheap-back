@@ -1,10 +1,6 @@
 language: java
 jdk:
 - openjdk11
-services:
-- docker
-before_install:
-- docker login --username=innulicc@gmail.com --password=393211b4-d5f0-49b1-82ba-a2f915f0cdf3 registry.heroku.com
 addons:
   apt:
     packages:
@@ -12,11 +8,6 @@ addons:
 script:
 - "./gradlew test build"
 after_success:
-- docker build -t registry.heroku.com/brain-heap/web .
-- docker images
-- docker inspect registry.heroku.com/brain-heap/web --format={{.Id}}
-- docker push registry.heroku.com/brain-heap/web:latest
-- notify_heroku.sh
 after_failure:
 - cat target/surefire-reports/*.txt
 notifications:
@@ -28,6 +19,3 @@ notifications:
     - aflammaal@gmail.com
     on_success: change
     on_failure: always
-env:
-  matrix:
-  - secure: ZCWVXKP2WqSbmGVP1yWzhk520YVLBT2rEl36FF9ccwsFHNoOH4ZmC07e2PKn2OXiuj1NtAUuk+xpaFSnuzQcHv1BX/Rd37mMy2/k8RLPkjFXd0bITx9rmdagE+v7VWqKhkW3pMRlPsPMLlgAh0nwvWzRUi+U3nXwnoWl5Noo0+ZZtFphUqivyXS8ZIlL34GamU7Q50Tps8FM2sgjkqqd+g5wIOX4s5Y/+5Jo24cW+FK4Qhmg5YufWPPHWVSVlAgJnX04L71cDDPuXQx3rm/mZIMi+DwPDDJPEkJKSZMG9A66yeKHgHX88VIjVaga68dHSgwwLRgqKHn3M/UgcyVcj+PaeE7UMU4c+4SqJ+P8nx9hVXfSYpFVRypWyGdKKfTlEpPDbvF/Sq4wgORASyXvKx8zqkP3r+d5rmA4CV936Emopezq2qkBOl//f2YX4qrPgSbe789nGYCHG3BDmtpMP2ZNnN5rWjYvW24pcOWTE+ug3LsSsu1Kb8M2C1Fa+uIdNJKoqNrX5Vt5BiTlfvAZqJh8gBTkboL47IrgmSk/doRQcYMH+vSUFnlJp8gnmBTSw7pKF5HKNYBO4T3dSKMWdztIP3+scsA9zbGoJ4g2BCAPd+xzbsvNZO//kO21vZOjSRjRIbcgCA5D3+wtrc+xdvQgwx0aTUQByPGvqMJwVyM=
