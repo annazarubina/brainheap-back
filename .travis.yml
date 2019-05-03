@@ -23,6 +23,7 @@ after_success:
   - docker images
   - docker push innulic/brain-heap:latest
 after_failure:
+  - cat target/surefire-reports/*.txt
 addons:
   apt:
     packages:
