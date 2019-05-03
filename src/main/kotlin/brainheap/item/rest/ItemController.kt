@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import java.util.*
+import javax.validation.Valid
 
 @RestController
 class ItemController(private val repository: ItemRepository) {
@@ -25,7 +26,7 @@ class ItemController(private val repository: ItemRepository) {
     }
 
     @PostMapping("/items")
-    fun create(@RequestBody itemView: ItemView): ResponseEntity<Item> {
+    fun create(@Valid @RequestBody itemView: ItemView): ResponseEntity<Item> {
         return ResponseEntity(repository.save(ItemProcessor.convert(itemView)), HttpStatus.CREATED)
     }
 
@@ -41,7 +42,7 @@ class ItemController(private val repository: ItemRepository) {
     }
 
     @PutMapping("/items/{id}")
-    fun update(@PathVariable id: String, @RequestBody itemView: ItemView): ResponseEntity<Item> {
+    fun update(@PathVariable id: String, @Valid @RequestBody itemView: ItemView): ResponseEntity<Item> {
         return repository.findById(id)
                 .map {
                     ResponseEntity(repository.save(ItemProcessor.update(it, itemView)), HttpStatus.OK)

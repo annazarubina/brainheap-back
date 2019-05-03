@@ -6,6 +6,7 @@ import brainheap.user.repo.UserRepository
 import brainheap.user.rest.view.UserView
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import java.util.*
+import javax.validation.Valid
 
 @RestController
 class UserController(private val repository: UserRepository) {
@@ -25,12 +27,12 @@ class UserController(private val repository: UserRepository) {
     }
 
     @PostMapping("/users")
-    fun create(@RequestBody userView: UserView): ResponseEntity<User> {
+    fun create(@Valid @RequestBody userView: UserView): ResponseEntity<User> {
         return ResponseEntity(repository.save(UserProcessor.convert(userView)), HttpStatus.CREATED)
     }
 
     @PutMapping("/users/{id}")
-    fun update(@PathVariable id: String, @RequestBody userView: UserView): ResponseEntity<User> {
+    fun update(@PathVariable id: String, @Valid @RequestBody userView: UserView): ResponseEntity<User> {
         return repository.findById(id)
                 .map {
                     ResponseEntity(repository.save(UserProcessor.update(it, userView)), HttpStatus.OK)
