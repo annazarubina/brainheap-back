@@ -4,7 +4,7 @@ jdk:
 services:
 - docker
 before_install:
-- echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+- docker login --username=innulicc@gmail.com --password=393211b4-d5f0-49b1-82ba-a2f915f0cdf3 registry.heroku.com
 addons:
   apt:
     packages:
@@ -12,9 +12,10 @@ addons:
 script:
 - "./gradlew test build"
 after_success:
-- docker build -t innulic/brain-heap .
+- docker build -t registry.heroku.com/brain-heap .
 - docker images
-- docker push innulic/brain-heap:latest
+- docker inspect registry.heroku.com/brain-heap --format={{.Id}}
+- docker push registry.heroku.com/brain-heap:latest
 after_failure:
 - cat target/surefire-reports/*.txt
 notifications:
