@@ -5,5 +5,5 @@ import org.springframework.data.repository.CrudRepository
 
 interface ItemRepository : CrudRepository<Item, String> {
 
-    fun findByTitle(lastName: String): Iterable<Item>
+    fun findByTitle(lastName: String): List<Item>
 }

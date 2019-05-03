@@ -1,19 +1,26 @@
 package brainheap.item.rest
 
 import brainheap.item.model.Item
-import brainheap.item.rest.view.ItemView
-import brainheap.item.repo.ItemRepository
 import brainheap.item.model.processors.ItemProcessor
+import brainheap.item.repo.ItemRepository
+import brainheap.item.rest.view.ItemView
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.*
+import org.springframework.web.bind.annotation.DeleteMapping
+import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.PutMapping
+import org.springframework.web.bind.annotation.RequestBody
+import org.springframework.web.bind.annotation.RequestParam
+import org.springframework.web.bind.annotation.RestController
 import java.util.*
 
 @RestController
 class ItemController(private val repository: ItemRepository) {
 
     @GetMapping("/items")
-    fun getAll() : ResponseEntity<List<Item>> {
+    fun getAll(): ResponseEntity<List<Item>> {
         return ResponseEntity(repository.findAll().toList(), HttpStatus.OK)
     }
 
@@ -58,7 +65,6 @@ class ItemController(private val repository: ItemRepository) {
     @GetMapping("/items/find")
     fun findByTitle(@RequestParam title: String): ResponseEntity<List<Item>> {
         return Optional.ofNullable(repository.findByTitle(title)
-                .toList()
                 .takeIf { !it.isEmpty() }
         )
                 .map { ResponseEntity(it, HttpStatus.OK) }

@@ -1,22 +1,26 @@
 package brainheap.user.rest
 
-import brainheap.item.model.Item
-import brainheap.item.model.processors.ItemProcessor
-import brainheap.item.rest.view.ItemView
 import brainheap.user.model.User
-import brainheap.user.rest.view.UserView
-import brainheap.user.repo.UserRepository
 import brainheap.user.model.processors.UserProcessor
+import brainheap.user.repo.UserRepository
+import brainheap.user.rest.view.UserView
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.*
+import org.springframework.web.bind.annotation.DeleteMapping
+import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.PutMapping
+import org.springframework.web.bind.annotation.RequestBody
+import org.springframework.web.bind.annotation.RequestParam
+import org.springframework.web.bind.annotation.RestController
 import java.util.*
 
 @RestController
 class UserController(private val repository: UserRepository) {
 
     @GetMapping("/users")
-    fun getAll() : ResponseEntity<List<User>> {
+    fun getAll(): ResponseEntity<List<User>> {
         return ResponseEntity(repository.findAll().toList(), HttpStatus.OK)
     }
 
@@ -50,7 +54,6 @@ class UserController(private val repository: UserRepository) {
     @GetMapping("/users/find")
     fun findByTitle(@RequestParam email: String): ResponseEntity<List<User>> {
         return Optional.ofNullable(repository.findByEmail(email)
-                .toList()
                 .takeIf { !it.isEmpty() }
         )
                 .map { ResponseEntity(it, HttpStatus.OK) }
