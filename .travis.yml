@@ -1,25 +1,25 @@
 language: java
 jdk:
-  - openjdk11
+- openjdk11
 services:
-  - docker
+- docker
 before_install:
-  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+- echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
 addons:
   apt:
     packages:
-      - docker-ce
+    - docker-ce
 script:
-  - "./gradlew test build"
+- "./gradlew test build"
 after_success:
-  - docker build -t innulic/brain-heap .
-  - docker images
-  - docker push innulic/brain-heap:latest
+- docker build -t innulic/brain-heap .
+- docker images
+- docker push innulic/brain-heap:latest
 after_failure:
-  - cat target/surefire-reports/*.txt
+- cat target/surefire-reports/*.txt
 deploy:
   api_key:
-    secure: tzUHNOluE8+ew4ZQo8myYHa1gY929ORuSAtujV2UBwmLmbuwJnGfLrhaKHXBlVmTyM/Rxy6O3Qgm5Q4zrMN4x59hBmY9N1YUTvPb5qVvLBDwSConMv35k0+OI5uXfkpovd1XzTGcW3ixck9JpnhgLXn6P/YrOcHVQqr7pK/VzURkYlKipqq78CE0UaWpqmIiUfUL2CAWVeqXnC6W2eyAzact1GPk+Fi/ClXEim0Rp1QDR8BUsrpdf/Oh9KUl2s57/eJK8LYRfaSH9QbPbcG1sgEvYAqrc4u7lJoiMcvbplOyq/XAaytsAAfI5C3ujOsu3Vdw9yvQEl24QKEGrph4ZpSyHewzmqUXe9KfK1rx8aOsTf/vha5q9wGJGXTdorTMt1Wc+hNPotXYhpJyS5bwiD2ExclVD3w0sEmGxVNEwNIhLJiTT45olNpPomUMnl1p+mU9/5SI4L1jBU0e7fHhE4Rt17klXqqU0nzUXyqf+EmH2dNXxq65jfgMLkugFxrRox6nmn1PksbSyoN38JXMpwvezKfFFMjel5ZOAAy1Kjw0YnvRLo9RutIIHONRsG06sURdh/yknwN7Gs0pMdCkWF6kDtRZNGNiCza1N4qzp0HmnN0n+HERrTidjIzwMFktdzyio3inZM+9qHjRJqKpfWUACqSYZhVXLRdPI7iduno=
+    secure: d5K5X6jskhtk4EgAA3kcTWHiFvM9ib1Q5aRTc0L6CxQDIybqewVGuVfg9FKo61ZP9vZxDI5jHltJ/h5/GPaZjdnDh1QRVWfUGA3SI9Rn1hSkuiS7HwyHbS1AMFM0XXldqagIEly8ThLXojgv9Gr0dxp/QThBA2zWuYO3+S3HfAfCsG+uYPvr19HLWzgsLnWmFfqA27RPNWSSQhqtyHHeP2oVRjvRcCbX5mKEVKKgj/SWvukE4rV+OiITttFyklc23Myh3iwV4QNV9HjZZcy4UcuTTK21FhsTtEWy4iO5pf3B+iiKbPSareaTnDag+5OcPTBrDSIVhq+XxhXxG+j6tvH6ZeXm7RADi+GNnESHdteCe+nj7LcKYO9ll/ISqVwV7bLyIedcF6Rk35z63+QWFcO0ua2NjGPIFZs+lgT+1z37xAn06aByjd3o2L0pnVVANS9FraZNl4XkA8fM8kyfaCX4qS7iWYkCcyQTdbrzx1Xhi0PITYfPiCDGABSLbEKRFbg+jRTTqXydOqvGzNOXBDqYDTmpLfySD6DeQ2ZCOaNUcG0vTKJbT3mQjF99cJN5nQw4XBwIpv06KKARdoxdzynOJts65j/kfk8ouOC5VnwcBXWa30wVUNE9W/Q5FKPmpNvNXDSPWWSlMy3MY2KVd9kFs+DN07Rpwx0NolfkS3Y=
   provider: heroku
   app:
     master: brainheap-staging
@@ -27,8 +27,11 @@ notifications:
   slack: neueda-technologies:ZYh2b6u5OcMbhwMu6i9U47fQ
   email:
     recipients:
-      - innulic@mail.ru
-      - a.a.zarubina@gmail.com
-      - aflammaal@gmail.com
+    - innulic@mail.ru
+    - a.a.zarubina@gmail.com
+    - aflammaal@gmail.com
     on_success: change
     on_failure: always
+env:
+  matrix:
+    secure: ZVH548F0B99Jz7u/7zdIACoaS/bAC04ZL38lsC7zVMdsEbQ0F9pIUXfjqnF2ZNehDSzKyWyYyE2wS652/G9jUrTVUXpRxHpsc1hrWDJH9uNSYvxlbeWCJNyWAhMvvLxH5pbmrNMOIcu+n5K0vsy/FejxgcQFp/LoYy8dWtRRxGAKcN5Zf46OVnVyUzmMNn1cogxHCxspYUBatAv10R71p1Qr32qddSr2ocbp3+HvuQe8me1CoBzCMwho75ZOe60Tx9iDH/7MXQY7IdyF6QHJ19tw+qDfSu26og83sehp3qOQvJf7CGcM532XWZYfjjb53lQtczoOZACN4WuuAgVbeGG1QlMhHfftip1Ut3YYS3TQg3LAtvfFFXarTD5n702RfvEAi2cRjgxX8NKrrQmnJBRUFr8FShQ5fmNo8/0V6xxxmoaoYBp07Fg20tVQLBfnsF5T/ckclHWdPoAu64bBiLpO73Tu5teI0ifnHtK2ysYnCNrK3Y0sqn1kqGcQMRbg+01WBX8mX+ePuDFYRR2svc/dnOPmvGTF4ojA7qQnHq59WyHYvg+M0RLCP+Xz5PYHsJOKUE+6pLtRDiyFrYr8yegsGpVaLhPAdR6p23cQmxTfGyi3b6n5Y8Bw2IR6orR1N/l31DQ8/AxkTzUs0Av7yq6U7bVRbJ5zCxuUMEcKbUI=
