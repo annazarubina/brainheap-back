@@ -3,6 +3,7 @@ package brainheap
 import brainheap.user.model.User
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.fail
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertAll
 import org.junit.jupiter.api.extension.ExtendWith
@@ -34,6 +35,7 @@ class ApplicationTests(@Autowired private val restTemplate: TestRestTemplate) {
                                     .collect(Collectors.toSet())?.size, 5)
                 }
         )
+        fail<String>("Failed. Because we want to see the logs")
     }
 
 }
