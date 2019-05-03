@@ -1,4 +1,3 @@
-# Init configuration
 language: java
 jdk:
   - openjdk11
@@ -10,16 +9,20 @@ addons:
   apt:
     packages:
       - docker-ce
-# Build phase
 script:
-  - ./gradlew test build
+  - "./gradlew test build"
 after_success:
   - docker build -t innulic/brain-heap .
   - docker images
   - docker push innulic/brain-heap:latest
 after_failure:
   - cat target/surefire-reports/*.txt
-# Setup notification
+deploy:
+  api_key:
+    secure: tzUHNOluE8+ew4ZQo8myYHa1gY929ORuSAtujV2UBwmLmbuwJnGfLrhaKHXBlVmTyM/Rxy6O3Qgm5Q4zrMN4x59hBmY9N1YUTvPb5qVvLBDwSConMv35k0+OI5uXfkpovd1XzTGcW3ixck9JpnhgLXn6P/YrOcHVQqr7pK/VzURkYlKipqq78CE0UaWpqmIiUfUL2CAWVeqXnC6W2eyAzact1GPk+Fi/ClXEim0Rp1QDR8BUsrpdf/Oh9KUl2s57/eJK8LYRfaSH9QbPbcG1sgEvYAqrc4u7lJoiMcvbplOyq/XAaytsAAfI5C3ujOsu3Vdw9yvQEl24QKEGrph4ZpSyHewzmqUXe9KfK1rx8aOsTf/vha5q9wGJGXTdorTMt1Wc+hNPotXYhpJyS5bwiD2ExclVD3w0sEmGxVNEwNIhLJiTT45olNpPomUMnl1p+mU9/5SI4L1jBU0e7fHhE4Rt17klXqqU0nzUXyqf+EmH2dNXxq65jfgMLkugFxrRox6nmn1PksbSyoN38JXMpwvezKfFFMjel5ZOAAy1Kjw0YnvRLo9RutIIHONRsG06sURdh/yknwN7Gs0pMdCkWF6kDtRZNGNiCza1N4qzp0HmnN0n+HERrTidjIzwMFktdzyio3inZM+9qHjRJqKpfWUACqSYZhVXLRdPI7iduno=
+  provider: heroku
+  app:
+    master: brainheap-staging
 notifications:
   slack: neueda-technologies:ZYh2b6u5OcMbhwMu6i9U47fQ
   email:
