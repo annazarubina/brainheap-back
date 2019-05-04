@@ -1,7 +1,6 @@
 package brainheap.config
 
-import brainheap.item.rest.ItemController
-import brainheap.user.rest.UserController
+import brainheap.Application
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import springfox.documentation.builders.ApiInfoBuilder
@@ -21,7 +20,7 @@ class SwaggerConfig {
         return Docket(DocumentationType.SWAGGER_2)
                 .apiInfo(getApiInfo())
                 .select()
-                .apis(RequestHandlerSelectors.basePackage(ItemController::class.java.`package`.name))
+                .apis(RequestHandlerSelectors.basePackage(Application::class.java.`package`.name))
                 .paths(PathSelectors.any())
                 .build()
     }
