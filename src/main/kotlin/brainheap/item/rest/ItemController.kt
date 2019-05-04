@@ -25,20 +25,20 @@ class ItemController(private val repository: ItemRepository, private val service
 
     @GetMapping("/items")
     fun filter(@RequestHeader(value = "Authorization", required = false) userId: String?, @RequestParam(required = false) query: String?):
-            ResponseEntity<List<Item>>  = service.filter(removeQuotes(userId), removeQuotes(query))
-                    ?.takeIf { !it.isEmpty() }
-                    ?.let{ ResponseEntity(it, HttpStatus.OK)} ?: ResponseEntity(HttpStatus.NO_CONTENT)
+            ResponseEntity<List<Item>> = service.filter(removeQuotes(userId), removeQuotes(query))
+            ?.takeIf { !it.isEmpty() }
+            ?.let { ResponseEntity(it, HttpStatus.OK) } ?: ResponseEntity(HttpStatus.NO_CONTENT)
 
     @PostMapping("/items")
     fun createAll(@RequestHeader(value = "Authorization") userId: String,
                   @Valid @RequestBody itemViews: List<ItemView>):
             ResponseEntity<List<Item>> = itemViews.map { repository.save(ItemProcessor.convert(it, userId)) }
-                    .takeIf { !it.isEmpty() }
-                    ?.let { ResponseEntity(it, HttpStatus.OK) } ?: ResponseEntity(HttpStatus.NO_CONTENT)
+            .takeIf { !it.isEmpty() }
+            ?.let { ResponseEntity(it, HttpStatus.OK) } ?: ResponseEntity(HttpStatus.NO_CONTENT)
 
     @GetMapping("/items/{id}")
-    fun get(@PathVariable id: String): ResponseEntity<Item> =
-            repository.findById(id).orElse(null)
+    fun get(@RequestHeader(value = "Authorization") userId: String, @PathVariable id: String): ResponseEntity<Item> =
+            repository.findByUserIdAndId(userId, id)
                     ?.let { ResponseEntity(it, HttpStatus.OK) } ?: ResponseEntity(HttpStatus.NO_CONTENT)
 
     @PostMapping("/items/new")
@@ -48,12 +48,13 @@ class ItemController(private val repository: ItemRepository, private val service
     @PatchMapping("/items/{id}")
     fun update(@RequestHeader(value = "Authorization") userId: String, @PathVariable id: String,
                @Valid @RequestBody itemView: ItemView): ResponseEntity<Item> =
-            repository.findById(id).orElse(null)
-                    ?.let { ResponseEntity(it, HttpStatus.OK) } ?: ResponseEntity(HttpStatus.NO_CONTENT)
+            repository.findByUserIdAndId(userId, id)
+                    ?.let { ResponseEntity(repository.save(ItemProcessor.update(it, itemView, userId)), HttpStatus.OK) }
+                    ?: ResponseEntity(HttpStatus.NO_CONTENT)
 
     @DeleteMapping("/items/{id}")
-    fun delete(@PathVariable id: String): ResponseEntity<Item> =
-            repository.findById(id).orElse(null)
+    fun delete(@RequestHeader(value = "Authorization") userId: String, @PathVariable id: String): ResponseEntity<Item> =
+            repository.findByUserIdAndId(userId, id)
                     ?.let { ResponseEntity(deleteItem(it), HttpStatus.OK) } ?: ResponseEntity(HttpStatus.NO_CONTENT)
 
     private fun deleteItem(item: Item): Item {
@@ -61,5 +62,5 @@ class ItemController(private val repository: ItemRepository, private val service
         return item
     }
 
-    private fun removeQuotes(string: String?) :String? = string?.removeSurrounding("\"")?.removeSurrounding("'")
+    private fun removeQuotes(string: String?): String? = string?.removeSurrounding("\"")?.removeSurrounding("'")
 }
