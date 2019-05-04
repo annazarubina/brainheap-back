@@ -3,6 +3,7 @@ package brainheap.item.rest
 import brainheap.item.model.Item
 import brainheap.item.model.processors.ItemProcessor
 import brainheap.item.repo.ItemRepository
+import brainheap.item.repo.ItemService
 import brainheap.item.rest.view.ItemView
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -20,18 +21,18 @@ import javax.validation.Valid
 
 @Validated
 @RestController
-class ItemController(private val repository: ItemRepository) {
+class ItemController(private val repository: ItemRepository, private val service: ItemService) {
 
     @GetMapping("/items")
-    fun getAll(@RequestHeader(value = "Authorization", required = false) userId: String?): ResponseEntity<List<Item>> =
-            (userId?.let { repository.findByUserId(userId) } ?: repository.findAll().toList())
-                    .takeIf { !it.isEmpty() }
-                    ?.let { ResponseEntity(it, HttpStatus.OK) } ?: ResponseEntity(HttpStatus.NO_CONTENT)
+    fun filter(@RequestHeader(value = "Authorization", required = false) userId: String?, @RequestParam(required = false) query: String?):
+            ResponseEntity<List<Item>>  = service.filter(removeQuotes(userId), removeQuotes(query))
+                    ?.takeIf { !it.isEmpty() }
+                    ?.let{ ResponseEntity(it, HttpStatus.OK)} ?: ResponseEntity(HttpStatus.NO_CONTENT)
 
     @PostMapping("/items")
     fun createAll(@RequestHeader(value = "Authorization") userId: String,
-                  @Valid @RequestBody itemViews: List<ItemView>): ResponseEntity<List<Item>> =
-            itemViews.map { repository.save(ItemProcessor.convert(it, userId)) }
+                  @Valid @RequestBody itemViews: List<ItemView>):
+            ResponseEntity<List<Item>> = itemViews.map { repository.save(ItemProcessor.convert(it, userId)) }
                     .takeIf { !it.isEmpty() }
                     ?.let { ResponseEntity(it, HttpStatus.OK) } ?: ResponseEntity(HttpStatus.NO_CONTENT)
 
@@ -55,15 +56,10 @@ class ItemController(private val repository: ItemRepository) {
             repository.findById(id).orElse(null)
                     ?.let { ResponseEntity(deleteItem(it), HttpStatus.OK) } ?: ResponseEntity(HttpStatus.NO_CONTENT)
 
-    @GetMapping("/items/filter")
-    fun findByTitle(@RequestHeader(value = "Authorization", required = false) userId: String?,
-                    @RequestParam title: String): ResponseEntity<List<Item>> =
-            (userId?.let { repository.findByTitleAndUserId(title, userId) } ?: repository.findByTitle(title))
-                    .takeIf { !it.isEmpty() }
-                    ?.let { ResponseEntity(it, HttpStatus.OK) } ?: ResponseEntity(HttpStatus.NO_CONTENT)
-
     private fun deleteItem(item: Item): Item {
         repository.deleteById(item.id)
         return item
     }
+
+    private fun removeQuotes(string: String?) :String? = string?.removeSurrounding("\"")?.removeSurrounding("'")
 }
