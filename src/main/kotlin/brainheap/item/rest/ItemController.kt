@@ -24,8 +24,12 @@ import javax.validation.Valid
 class ItemController(private val repository: ItemRepository, private val service: ItemService) {
 
     @GetMapping("/items")
-    fun filter(@RequestHeader(value = "Authorization", required = false) userId: String?, @RequestParam(required = false) query: String?):
-            ResponseEntity<List<Item>> = service.filter(removeQuotes(userId), removeQuotes(query))
+    fun filter(@RequestHeader(value = "Authorization", required = false) userId: String?,
+               @RequestParam(required = false) query: String?,
+               @RequestParam(required = false) offset: Int?,
+               @RequestParam(required = false) limit: Int?):
+
+            ResponseEntity<List<Item>> = service.filter(removeQuotes(userId), removeQuotes(query), offset, limit)
             ?.takeIf { !it.isEmpty() }
             ?.let { ResponseEntity(it, HttpStatus.OK) } ?: ResponseEntity(HttpStatus.NO_CONTENT)
 
