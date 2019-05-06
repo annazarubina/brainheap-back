@@ -1,8 +1,8 @@
 package brainheap.item.repo
 
 import brainheap.item.model.Item
-import org.springframework.data.repository.CrudRepository
+import org.springframework.data.mongodb.repository.MongoRepository
 
-interface ItemRepository : CrudRepository<Item, String> {
+interface ItemRepository : MongoRepository<Item, String> {
     fun findByUserIdAndId(userId: String, id: String): Item?
 }

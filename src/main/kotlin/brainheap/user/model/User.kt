@@ -1,18 +1,15 @@
 package brainheap.user.model
 
-import org.hibernate.annotations.GenericGenerator
-import javax.persistence.*
 import javax.validation.constraints.NotEmpty
+import org.springframework.data.mongodb.core.mapping.Document
+import org.springframework.data.annotation.Id
 
-@Entity
-@Table(name = "users")
+@Document(collection = "user")
 data class User(
         @field:NotEmpty
         val name: String,
         @field:NotEmpty
         val email: String,
         @Id
-        @GeneratedValue(strategy = GenerationType.TABLE, generator="system-uuid")
-        @GenericGenerator(name="system-uuid", strategy = "uuid")
         val id: String = ""
 )

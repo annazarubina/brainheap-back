@@ -28,13 +28,16 @@ repositories {
 
 dependencies {
 	compile("org.springframework.boot:spring-boot-starter-web")
-	compile("org.springframework.boot:spring-boot-starter-data-jpa")
-	compile("com.h2database:h2")
+	compile("org.springframework.boot:spring-boot-starter-data-mongodb")
+	compile("org.springframework.boot:spring-boot-starter-web")
 	compile("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
 	compile("org.jetbrains.kotlin:kotlin-reflect")
 	compile("com.fasterxml.jackson.module:jackson-module-kotlin")
 	compile("io.springfox:springfox-swagger-ui:2.9.2")
 	compile("io.springfox:springfox-swagger2:2.9.2")
+
+	compile("org.mongodb:mongodb-driver")
+
 	testCompile("org.springframework.boot:spring-boot-starter-test") {
 		exclude(module = "junit")
 	}
