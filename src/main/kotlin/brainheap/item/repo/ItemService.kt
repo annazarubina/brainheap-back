@@ -1,11 +1,14 @@
 package brainheap.item.repo
 
+import brainheap.common.SearchQueryBuilder
+import brainheap.common.UrlSearchQueryParser
 import brainheap.item.model.Item
 import org.hibernate.Session
 import org.hibernate.query.Query
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import javax.persistence.EntityManager
+import javax.persistence.criteria.CriteriaQuery
 
 @Service
 class ItemService(private val entityManager: EntityManager) {
@@ -16,7 +19,15 @@ class ItemService(private val entityManager: EntityManager) {
 
     @Transactional(readOnly = true)
     fun filter(userId: String?, queryString: String?, offset: Int?, limit: Int?): List<Item>? {
-        val query: Query<Item>? = createQuery(userId, queryString)
+        val query = createQuery(userId, queryString)
+        offset?.let { query?.setFirstResult(it) }
+        limit?.let { query?.setMaxResults(it) }
+        return query?.resultList
+    }
+
+    @Transactional(readOnly = true)
+    fun filterV2(userId: String?, queryString: String?, orderBy: String?, offset: Int?, limit: Int?): List<Item>? {
+        val query = entityManager.createQuery(getSearchQuery(userId, queryString, orderBy))
         offset?.let { query?.setFirstResult(it) }
         limit?.let { query?.setMaxResults(it) }
         return query?.resultList
@@ -31,4 +42,11 @@ class ItemService(private val entityManager: EntityManager) {
                         ?.let { templateUserIdAndQuery.format(userId, query) }
                         ?: templateQuery.format(query)
             } ?: userId?.let { templateUserId.format(userId) } ?: templateAll
+
+    private fun getSearchQuery(userId: String?, query: String?, orderBy: String?): CriteriaQuery<Item> {
+        val builder = SearchQueryBuilder(entityManager, Item::class.java)
+        val parser = UrlSearchQueryParser(builder)
+        parser.parse(userId, query, orderBy)
+        return builder.build()
+    }
 }
