@@ -35,7 +35,6 @@ dependencies {
 	compile("com.fasterxml.jackson.module:jackson-module-kotlin")
 	compile("io.springfox:springfox-swagger-ui:2.9.2")
 	compile("io.springfox:springfox-swagger2:2.9.2")
-
 	compile("org.mongodb:mongodb-driver")
 
 	testCompile("org.springframework.boot:spring-boot-starter-test") {
@@ -46,4 +45,3 @@ dependencies {
 
 	annotationProcessor  ("org.springframework.boot:spring-boot-configuration-processor")
 }
-
