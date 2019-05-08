@@ -40,6 +40,8 @@ dependencies {
 	testCompile("org.springframework.boot:spring-boot-starter-test") {
 		exclude(module = "junit")
 	}
+	testCompile ("de.flapdoodle.embed:de.flapdoodle.embed.mongo:2.1.2")
+	
 	testImplementation("org.junit.jupiter:junit-jupiter-api")
 	testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
 
