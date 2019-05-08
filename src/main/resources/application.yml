@@ -1,4 +1,0 @@
-#TODO(eankinn) Remove profile after config deploy to heroku
-spring:
-  profiles:
-    active: development
