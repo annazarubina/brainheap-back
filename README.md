@@ -19,7 +19,7 @@ To skip tests add `-x test` flag.
 Docker-compose does not run the app and db correctly now, so for development
 before run the app, please, run docker container with mongo image:
 
-`docker run -p 27017 mongo`
+`docker run -d -p 27017:27017 mongo`
 
 **Start**
 
