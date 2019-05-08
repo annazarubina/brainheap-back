@@ -10,8 +10,12 @@ before_install:
 script:
   - "./gradlew build --info"
 after_success:
-  - heroku container:push web -a brain-heap
-  - heroku container:release web -a brain-heap
+  - docker build -f Dockerfile --iidfile imageid.txt -t registry.heroku.com/brain-heap .
+  - docker push registry.heroku.com/brain-heap
+  - apk add --no-cache curl
+  - echo "Docker Image ID is $(cat imageid.txt)"
+  - "curl -X PATCH https://api.heroku.com/apps/brain-heap/formation --header \"Content-Type: application/json\" --header \"Accept: application/vnd.heroku+json; version=3.docker-releases\" --header \"Authorization: Bearer ${HEROKU_API_KEY}\" --data '{ \"updates\": [ { \"type\": \"web\", \"docker_image\": "'$(cat imageid.txt)'" } ] }'"
+
 after_failure:
   - cat target/surefire-reports/*.txt
 notifications:
