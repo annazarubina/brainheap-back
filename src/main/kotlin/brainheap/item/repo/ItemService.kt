@@ -1,39 +1,27 @@
 package brainheap.item.repo
 
+import brainheap.common.urlsearchparser.SearchQueryBuilder
+import brainheap.common.urlsearchparser.UrlQueryParser
 import brainheap.item.model.Item
+import org.springframework.data.mongodb.core.MongoTemplate
+import org.springframework.data.mongodb.core.find
 import org.springframework.data.mongodb.core.query.Query
-//import org.hibernate.Session
-//import org.hibernate.query.Query
 import org.springframework.stereotype.Service
-import org.springframework.transaction.annotation.Transactional
-//import javax.persistence.EntityManager
 
-// Commented because mongodb uses other approach
 @Service
-class ItemService(
-//        private val entityManager: EntityManager
-) {
-    private val templateUserIdAndQuery: String = "SELECT i FROM Item i WHERE i.userId = '%s' AND (%s)"
-    private val templateQuery: String = "SELECT i FROM Item i WHERE (%s)"
-    private val templateUserId: String = "SELECT i FROM Item i WHERE i.userId = '%s'"
-    private val templateAll: String = "SELECT i FROM Item i"
+class ItemService(private val template: MongoTemplate) {
 
-    @Transactional(readOnly = true)
-    fun filter(userId: String?, queryString: String?, offset: Int?, limit: Int?): List<Item>? {
-//        val query: Query<Item>? = createQuery(userId, queryString)
-//        offset?.let { query?.setFirstResult(it) }
-//        limit?.let { query?.setMaxResults(it) }
-//        return query?.resultList
-        return emptyList()
+    fun filter(userId: String?, queryString: String?, orderBy: String?, offset: Int?, limit: Int?): List<Item>? {
+        val query = getSearchQuery(userId, queryString, orderBy)
+        offset?.let { query.skip(it.toLong()) }
+        limit?.let { query.limit(it) }
+        return template.find(query)
     }
 
-//    private fun createQuery(userId: String?, query: String?): Query<Item>? =
-//            (entityManager.delegate as Session).createQuery(getQueryString(userId, query), Item::class.java)
-//
-//    private fun getQueryString(userId: String?, query: String?): String =
-//            query?.let {
-//                userId
-//                        ?.let { templateUserIdAndQuery.format(userId, query) }
-//                        ?: templateQuery.format(query)
-//            } ?: userId?.let { templateUserId.format(userId) } ?: templateAll
+    private fun getSearchQuery(userId: String?, query: String?, orderBy: String?): Query {
+        val builder = SearchQueryBuilder()
+        val parser = UrlQueryParser(builder)
+        parser.parse(userId, query, orderBy)
+        return builder.build()
+    }
 }

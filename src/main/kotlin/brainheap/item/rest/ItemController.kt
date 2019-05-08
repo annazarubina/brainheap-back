@@ -26,18 +26,19 @@ class ItemController(private val repository: ItemRepository, private val service
     @GetMapping("/items")
     fun filter(@RequestHeader(value = "Authorization", required = false) userId: String?,
                @RequestParam(required = false) query: String?,
+               @RequestParam(required = false) sortBy: String?,
                @RequestParam(required = false) offset: Int?,
                @RequestParam(required = false) limit: Int?):
 
-            ResponseEntity<List<Item>> = service.filter(removeQuotes(userId), removeQuotes(query), offset, limit)
-            ?.takeIf { !it.isEmpty() }
+            ResponseEntity<List<Item>> = service.filter(removeQuotes(userId), removeQuotes(query), sortBy, offset, limit)
+            ?.takeIf { it.isNotEmpty() }
             ?.let { ResponseEntity(it, HttpStatus.OK) } ?: ResponseEntity(HttpStatus.NO_CONTENT)
 
     @PostMapping("/items")
     fun createAll(@RequestHeader(value = "Authorization") userId: String,
                   @Valid @RequestBody itemViews: List<ItemView>):
             ResponseEntity<List<Item>> = itemViews.map { repository.save(ItemProcessor.convert(it, userId)) }
-            .takeIf { !it.isEmpty() }
+            .takeIf { it.isNotEmpty() }
             ?.let { ResponseEntity(it, HttpStatus.OK) } ?: ResponseEntity(HttpStatus.NO_CONTENT)
 
     @GetMapping("/items/{id}")
