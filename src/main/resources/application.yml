@@ -1,4 +1,0 @@
-#(TODO) Remove profile from base (default) application file
-spring:
-  profiles:
-    active: development
