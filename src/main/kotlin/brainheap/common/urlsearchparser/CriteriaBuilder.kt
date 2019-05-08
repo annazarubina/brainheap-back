@@ -22,9 +22,9 @@ class CriteriaBuilder {
                 val operand1 = specStack.pop()
                 val operand2 = specStack.pop()
                 if (mayBeOperand == UrlSearchOperation.AND_OPERATOR)
-                    specStack.push(operand1.andOperator(operand2))
+                    specStack.push(Criteria().andOperator(operand1, operand2))
                 else if (mayBeOperand == UrlSearchOperation.OR_OPERATOR)
-                    specStack.push(operand1.orOperator(operand2))
+                    specStack.push(Criteria().orOperator(operand1, operand2))
             }
 
         }
