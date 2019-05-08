@@ -5,8 +5,6 @@ addons:
   apt:
     packages:
     - docker-ce
-before_install:
-- docker login --username=innulicc@gmail.com --password=69dc5a88-95c2-4ab2-8314-e8069c162c14 registry.heroku.com
 script:
 - "./gradlew build --info"
 after_success:
