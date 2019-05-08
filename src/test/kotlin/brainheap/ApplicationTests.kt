@@ -28,15 +28,15 @@ class ApplicationTests(@Autowired private val restTemplate: TestRestTemplate) {
         val json = restTemplate.getForObject<String>("/users")
         val users = jacksonObjectMapper().readValue(json, Array<User>::class.java).asList()
         assertAll("compare names and id should be unique",
-                { assertEquals(users.size, 5) },
-                { assertEquals(users[0].name, "Anna Zarubina") },
-                { assertEquals(users[0].email, "a.a.zarubina@gmail.com") },
+                { assertEquals(5, users.size) },
+                { assertEquals("Anna Zarubina", users[0].name) },
+                { assertEquals("a.a.zarubina@gmail.com", users[0].email) },
                 {
                     assertEquals(
-                            users
+                            5, users
                                     .map { it.id }
                                     .stream()
-                                    .collect(Collectors.toSet())?.size, 5)
+                                    .collect(Collectors.toSet())?.size)
                 }
         )
     }
