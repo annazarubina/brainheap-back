@@ -8,7 +8,7 @@ addons:
 before_install:
 - docker login --username=innulicc@gmail.com --password=69dc5a88-95c2-4ab2-8314-e8069c162c14 registry.heroku.com
 script:
-- "./gradlew test build"
+- "./gradlew build --info"
 after_success:
 - heroku container:push web -a brain-heap
 - heroku container:release web -a brain-heap
