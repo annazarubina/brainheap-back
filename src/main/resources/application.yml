@@ -2,3 +2,5 @@ spring:
   data:
     mongodb:
       password: ENC(QKvBdCug+2Wu/Or8fG4HOgplsvpNHkaUC2ZQu3C7bJ3DG/ecn2773w==)
+  main:
+    banner-mode: 'off'
