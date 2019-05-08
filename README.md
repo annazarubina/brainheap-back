@@ -14,13 +14,6 @@ Run `./gradlew build`
 
 To skip tests add `-x test` flag.
 
-**Temporary solution for using mongoDB**
-
-Docker-compose does not run the app and db correctly now, so for development
-before run the app, please, run docker container with mongo image:
-
-`docker run -d -p 27017:27017 mongo`
-
 **Start**
 
 Run `docker-compose up --build -d`

@@ -1,4 +1,4 @@
-version: '3.4'
+version: '3.3'
 services:
   brainheap-back:
 # todo(innulic) move to specific version
@@ -11,13 +11,11 @@ services:
     depends_on:
       - brainheap-mongodb
   brainheap-mongodb:
-    build: db
+    image: mongo:3.6
     container_name: "brainheap-mongodb"
+    hostname: brainheap-db
     environment:
-    - MONGO_SERVER=brainheap-db
-    - MONGO_PORT=27017
-    - MONGO_DB=brainheap
-    - MONGO_DB_STARTER=brainheap_db_starter
+    - MONGO_INITDB_DATABASE=brainheap
     volumes:
       - ./data/db:/data/db
     ports:

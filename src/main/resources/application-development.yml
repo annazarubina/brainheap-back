@@ -3,8 +3,5 @@ server:
 spring:
   data:
     mongodb:
-      host: localhost
+      uri: mongodb://brainheap-mongodb/brainheap
       port: 27017
-      database: brainheap
-
-
