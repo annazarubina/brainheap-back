@@ -1,0 +1,1 @@
+web: java -Dserver.port=$PORT $JAVA_OPTS -jar build/libs/*.jar -Dspring.data.mongodb.database=heroku_dl043bxr -Dspring.data.mongodb.host=ds263109.mlab.com -Dspring.data.mongodb.port=63109 -Dspring.data.mongodb.username=heroku_dl043bxr
