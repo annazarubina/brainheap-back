@@ -13,7 +13,6 @@ services:
   brainheap-mongodb:
     image: mongo:3.6
     container_name: "brainheap-mongodb"
-    hostname: brainheap-db
     environment:
     - MONGO_INITDB_DATABASE=brainheap
     volumes:
