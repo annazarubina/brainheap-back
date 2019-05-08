@@ -19,5 +19,5 @@ data class Item(
         @field:NotNull
         val userId: String,
         @Id
-        val id: String = ""
+        val id: String = UUID.randomUUID().toString()
 )
