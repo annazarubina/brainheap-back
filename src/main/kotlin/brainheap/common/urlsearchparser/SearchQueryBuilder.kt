@@ -18,13 +18,16 @@ class SearchQueryBuilder {
         return this
     }
 
-    fun addWhereEqual(name: String?, value: String?): SearchQueryBuilder {
-        name?.let { query.addCriteria(Criteria.where(it).`is`(value)) }
-        return this
-    }
-
-    fun addCriteria(criteriaDefinition: CriteriaDefinition?): SearchQueryBuilder {
-        criteriaDefinition?.let { query.addCriteria(criteriaDefinition) }
+    fun addCriteria(criteria: Criteria?, userId: String?): SearchQueryBuilder {
+        val userIdCriteria = userId?.let {Criteria.where("userId").`is`(userId)}
+        criteria
+                ?.let { userIdCriteria
+                        ?.let{ query.addCriteria(Criteria().andOperator(criteria, userIdCriteria)) }
+                        ?: query.addCriteria(criteria)
+                }
+                ?: userIdCriteria
+                        ?.let{query.addCriteria(userIdCriteria)}
+                        ?: query
         return this
     }
 }
