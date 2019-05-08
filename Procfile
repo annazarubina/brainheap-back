@@ -1,1 +1,1 @@
-web: java -Dserver.port=$PORT $JAVA_OPTS -Dspring.data.mongodb.database=heroku_dl043bxr -Dspring.data.mongodb.host=ds263109.mlab.com -Dspring.data.mongodb.port=63109 -Dspring.data.mongodb.username=heroku_dl043bxr -Djasypt.encryptor.password=brain-heap-innulic -jar build/libs/*.jar 
+docker run -d -p $PORT:$PORT -e spring.data.mongodb.database=heroku_dl043bxr -e spring.data.mongodb.host=ds263109.mlab.com -e spring.data.mongodb.port=63109 -e spring.data.mongodb.username=heroku_dl043bxr -e jasypt.encryptor.password=brain-heap-innulic registry.heroku.com/brain-heap
