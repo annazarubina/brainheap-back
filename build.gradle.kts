@@ -35,6 +35,7 @@ dependencies {
 	compile("io.springfox:springfox-swagger-ui:2.9.2")
 	compile("io.springfox:springfox-swagger2:2.9.2")
 	compile("org.mongodb:mongodb-driver")
+	compile ("com.github.ulisesbocchio:jasypt-spring-boot-starter:2.1.1")
 
 	testCompile("org.springframework.boot:spring-boot-starter-test") {
 		exclude(module = "junit")
