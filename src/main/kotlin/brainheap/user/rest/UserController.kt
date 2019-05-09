@@ -20,11 +20,19 @@ import javax.validation.Valid
 class UserController(private val repository: UserRepository) {
 
     @GetMapping("/users")
-    fun getAll(): ResponseEntity<List<User>> = ResponseEntity(repository.findAll().toList(), HttpStatus.OK)
+    fun filter(@RequestParam(required = false) email: String?): ResponseEntity<User> {
+        val list = email?.let { repository.findByEmail(email) } ?: repository.findAll()
+        return list
+                .takeIf { it.isNotEmpty() }
+                ?.let { ResponseEntity(it[0], HttpStatus.OK) }
+                ?: ResponseEntity(HttpStatus.NOT_FOUND)
+    }
 
     @PostMapping("/users")
-    fun create(@Valid @RequestBody userView: UserView): ResponseEntity<User> =
-            ResponseEntity(repository.save(UserProcessor.convert(userView)), HttpStatus.CREATED)
+    fun create(@Valid @RequestBody userView: UserView): ResponseEntity<User> {
+        require(repository.findByEmail(userView.email).isEmpty()) { "User with this email (${userView.email}) already exists" }
+        return ResponseEntity(repository.insert(UserProcessor.convert(userView)), HttpStatus.CREATED)
+    }
 
     @PutMapping("/users/{id}")
     fun update(@PathVariable id: String, @Valid @RequestBody userView: UserView): ResponseEntity<User> =
@@ -41,13 +49,6 @@ class UserController(private val repository: UserRepository) {
     @GetMapping("/users/{id}")
     fun get(@PathVariable id: String): ResponseEntity<User> =
             repository.findById(id).orElse(null)
-                    ?.let { ResponseEntity(it, HttpStatus.OK) }
-                    ?: ResponseEntity(HttpStatus.NOT_FOUND)
-
-    @GetMapping("/users/find")
-    fun findByTitle(@RequestParam email: String): ResponseEntity<List<User>> =
-            repository.findByEmail(email)
-                    .takeIf { !it.isEmpty() }
                     ?.let { ResponseEntity(it, HttpStatus.OK) }
                     ?: ResponseEntity(HttpStatus.NOT_FOUND)
 
