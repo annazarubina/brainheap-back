@@ -1,5 +1,6 @@
 package brainheap.item.rest
 
+import brainheap.common.tools.removeQuotes
 import brainheap.item.model.Item
 import brainheap.item.model.processors.ItemProcessor
 import brainheap.item.repo.ItemRepository
@@ -66,6 +67,4 @@ class ItemController(private val repository: ItemRepository, private val service
         repository.deleteById(item.id)
         return item
     }
-
-    private fun removeQuotes(string: String?): String? = string?.removeSurrounding("\"")?.removeSurrounding("'")
 }
