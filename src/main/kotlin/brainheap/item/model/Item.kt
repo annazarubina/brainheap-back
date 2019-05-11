@@ -1,8 +1,9 @@
 package brainheap.item.model
 
-import java.util.*
-import org.springframework.data.mongodb.core.mapping.Document
+import brainheap.common.tools.generateUUID
 import org.springframework.data.annotation.Id
+import org.springframework.data.mongodb.core.mapping.Document
+import java.util.*
 import javax.validation.constraints.NotEmpty
 import javax.validation.constraints.NotNull
 
@@ -19,5 +20,5 @@ data class Item(
         @field:NotNull
         val userId: String,
         @Id
-        val id: String = UUID.randomUUID().toString()
+        val id: String = generateUUID()
 )
