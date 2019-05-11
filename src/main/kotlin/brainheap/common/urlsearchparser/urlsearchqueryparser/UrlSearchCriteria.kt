@@ -1,11 +1,15 @@
 package brainheap.common.urlsearchparser.urlsearchqueryparser
 
+import brainheap.common.tools.removeQuotes
+
 class UrlSearchCriteria
-(var key: String, operationString: String, prefix: String?, val value: String, suffix: String?) {
+(var key: String, operationString: String, prefix: String?, var value: String, suffix: String?) {
 
     var operation: UrlSearchOperation?
 
     init {
+        this.key = removeQuotes(this.key)!!
+        this.value = removeQuotes(this.value)!!
         var op = UrlSearchOperation.getSimpleOperation(operationString[0])
         if (op != null) {
             if (op === UrlSearchOperation.EQUALITY) { // the operation may be complex operation
