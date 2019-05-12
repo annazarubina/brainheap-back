@@ -1,6 +1,7 @@
 package brainheap.user.rest
 
 import brainheap.item.model.Item
+import brainheap.item.repo.ItemRepository
 import brainheap.user.model.User
 import brainheap.user.model.processors.UserProcessor
 import brainheap.user.repo.UserRepository
@@ -16,10 +17,11 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
+import java.util.stream.Collectors
 import javax.validation.Valid
 
 @RestController
-class UserController(private val repository: UserRepository) {
+class UserController(private val repository: UserRepository, private val itemRepository: ItemRepository) {
 
     @GetMapping("/users")
     fun filter(@RequestParam(required = false) email: String?): ResponseEntity<User> {
@@ -43,15 +45,18 @@ class UserController(private val repository: UserRepository) {
                     ?: ResponseEntity(HttpStatus.NOT_FOUND)
 
     @DeleteMapping("/users/{id}")
-    fun delete(@PathVariable id: String): ResponseEntity<User> =
-            repository.findById(id).orElse(null)
-                    ?.let { ResponseEntity(deleteUser(it), HttpStatus.OK) }
-                    ?: ResponseEntity(HttpStatus.NOT_FOUND)
+    fun delete(@PathVariable id: String): ResponseEntity<User> {
+        require(itemRepository.findByUserId(id)?.isEmpty()?:true) { "Cannot delete user, he has saved items" }
+        return repository.findById(id).orElse(null)
+                ?.let { ResponseEntity(deleteUser(it), HttpStatus.OK) }
+                ?: ResponseEntity(HttpStatus.NOT_FOUND)
+    }
 
     @DeleteMapping("/users")
     fun deleteAll(): ResponseEntity<List<User>> =
             repository.findAll().toList()
                     .takeIf { it.isNotEmpty() }
+                    ?.filter { itemRepository.findByUserId(it.id)?.isEmpty()?:true }
                     ?.map { deleteUser(it) }
                     ?.let { ResponseEntity(it, HttpStatus.OK) } ?: ResponseEntity(HttpStatus.NO_CONTENT)
 
