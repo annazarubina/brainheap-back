@@ -4,6 +4,8 @@ import brainheap.common.tools.getCurrentUTCTime
 import brainheap.item.model.Item
 import brainheap.item.repo.ItemRepository
 import brainheap.item.rest.view.ItemView
+import brainheap.user.model.User
+import brainheap.user.repo.UserRepository
 import org.junit.jupiter.api.*
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
@@ -25,16 +27,25 @@ import java.util.*
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("development")
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-internal class ItemIntegrationTest(@Autowired val restTemplate: TestRestTemplate, @Autowired val itemRepository: ItemRepository){
+internal class ItemIntegrationTest(@Autowired val restTemplate: TestRestTemplate,
+                                   @Autowired val itemRepository: ItemRepository, @Autowired val userRepository: UserRepository){
 
     private val time: Date = getCurrentUTCTime()
+    private var firstUserId: String? = null
+    private var secondUserId: String? = null
 
     @BeforeAll
+    fun setUpAll() {
+        firstUserId = userRepository.insert(User("first user", "first.user@test.test")).id
+        secondUserId = userRepository.insert(User("second user", "second.user@test.test")).id
+    }
+
+    @BeforeEach
     fun setUp() {
-        itemRepository.insert(Item("word1", "description 1", time, time, "1"))
-        itemRepository.insert(Item("word2", "description 2", time, time, "1"))
-        itemRepository.insert(Item("word3", "description 3", time, time, "2"))
-        itemRepository.insert(Item("word4", "description 4", time, time, "2"))
+        itemRepository.insert(Item("word1", "description 1", time, time, firstUserId!!))
+        itemRepository.insert(Item("word2", "description 2", time, time, firstUserId!!))
+        itemRepository.insert(Item("word3", "description 3", time, time, secondUserId!!))
+        itemRepository.insert(Item("word4", "description 4", time, time, secondUserId!!))
     }
 
     @Test
@@ -52,7 +63,7 @@ internal class ItemIntegrationTest(@Autowired val restTemplate: TestRestTemplate
         //given
         val newItem = ItemView("word", "description")
         val headers = HttpHeaders()
-        headers.set("Authorization", "1")
+        headers.set("Authorization", firstUserId!!)
         //when
         val created = restTemplate.postForEntity("/items/new", HttpEntity(newItem, headers), ItemView::class.java)
         //than
@@ -68,7 +79,7 @@ internal class ItemIntegrationTest(@Autowired val restTemplate: TestRestTemplate
         val sizeBefore = itemRepository.findAll().size
         val itemToDelete = itemRepository.findAll()[0]
         val headers = LinkedMultiValueMap<String, String>()
-        headers.add("Authorization", "1")
+        headers.add("Authorization", firstUserId!!)
 
         //when
         val deleted = restTemplate.exchange("/items/${itemToDelete.id}", HttpMethod.DELETE, HttpEntity<String>(headers), Item::class.java)
@@ -77,5 +88,15 @@ internal class ItemIntegrationTest(@Autowired val restTemplate: TestRestTemplate
         val sizeAfter = itemRepository.findAll().size
         assertEquals(sizeBefore-1, sizeAfter)
         assertEquals(itemToDelete, deleted.body)
+    }
+
+    @AfterEach
+    fun tearDown() {
+        itemRepository.deleteAll()
+    }
+
+    @AfterAll
+    fun tearDownAll() {
+        userRepository.deleteAll()
     }
 }
