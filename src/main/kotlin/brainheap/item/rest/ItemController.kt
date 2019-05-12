@@ -63,6 +63,13 @@ class ItemController(private val repository: ItemRepository, private val service
             repository.findByUserIdAndId(userId, id)
                     ?.let { ResponseEntity(deleteItem(it), HttpStatus.OK) } ?: ResponseEntity(HttpStatus.NO_CONTENT)
 
+    @DeleteMapping("/items")
+    fun deleteAll(@RequestHeader(value = "Authorization") userId: String): ResponseEntity<List<Item>> =
+            repository.findByUserId(userId)
+                    ?.takeIf { it.isNotEmpty() }
+                    ?.map { deleteItem(it) }
+                    ?.let { ResponseEntity(it, HttpStatus.OK) } ?: ResponseEntity(HttpStatus.NO_CONTENT)
+
     private fun deleteItem(item: Item): Item {
         repository.deleteById(item.id)
         return item

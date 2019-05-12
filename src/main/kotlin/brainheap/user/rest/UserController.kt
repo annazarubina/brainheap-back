@@ -1,5 +1,6 @@
 package brainheap.user.rest
 
+import brainheap.item.model.Item
 import brainheap.user.model.User
 import brainheap.user.model.processors.UserProcessor
 import brainheap.user.repo.UserRepository
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
+import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import javax.validation.Valid
@@ -45,6 +47,13 @@ class UserController(private val repository: UserRepository) {
             repository.findById(id).orElse(null)
                     ?.let { ResponseEntity(deleteUser(it), HttpStatus.OK) }
                     ?: ResponseEntity(HttpStatus.NOT_FOUND)
+
+    @DeleteMapping("/users")
+    fun deleteAll(): ResponseEntity<List<User>> =
+            repository.findAll().toList()
+                    .takeIf { it.isNotEmpty() }
+                    ?.map { deleteUser(it) }
+                    ?.let { ResponseEntity(it, HttpStatus.OK) } ?: ResponseEntity(HttpStatus.NO_CONTENT)
 
     @GetMapping("/users/{id}")
     fun get(@PathVariable id: String): ResponseEntity<User> =
