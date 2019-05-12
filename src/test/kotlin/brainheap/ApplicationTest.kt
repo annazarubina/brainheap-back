@@ -13,7 +13,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 @EnableAutoConfiguration(exclude = [JasyptSpringBootAutoConfiguration::class])
 @ActiveProfiles("development")
-class ApplicationTests {
+class ApplicationTest {
 
     @Test
     fun initContext() {
