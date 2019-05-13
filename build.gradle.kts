@@ -1,12 +1,13 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    val kotlinVersion = "1.3.21"
+    val kotlinVersion = "1.3.30"
     id("org.springframework.boot") version "2.1.8.RELEASE"
     id("org.jetbrains.kotlin.jvm") version kotlinVersion
     id("org.jetbrains.kotlin.plugin.spring") version kotlinVersion
     id("org.jetbrains.kotlin.plugin.jpa") version kotlinVersion
     id("io.spring.dependency-management") version "1.0.6.RELEASE"
+    kotlin("kapt") version "1.3.31"
 }
 
 version = "1.0.0-SNAPSHOT"
@@ -29,6 +30,10 @@ repositories {
 dependencies {
     compile("org.springframework.boot:spring-boot-starter-web")
     compile("org.springframework.boot:spring-boot-starter-data-mongodb")
+    compile("org.springframework.security:spring-security-oauth2-client:5.1.5.RELEASE")
+    compile("org.springframework.security.oauth:spring-security-oauth2:2.3.5.RELEASE")
+    compile("org.springframework.security.oauth.boot:spring-security-oauth2-autoconfigure:2.1.4.RELEASE")
+    compile("org.springframework.boot:spring-boot-starter-security")
     compile("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     compile("org.jetbrains.kotlin:kotlin-reflect")
     compile("com.fasterxml.jackson.module:jackson-module-kotlin")
@@ -43,9 +48,11 @@ dependencies {
         exclude(module = "junit")
     }
     testCompile("de.flapdoodle.embed:de.flapdoodle.embed.mongo:2.1.2")
+    testCompile("org.springframework.security:spring-security-test")
 
     testImplementation("org.junit.jupiter:junit-jupiter-api")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
 
-    annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
+    kapt("org.springframework.boot:spring-boot-configuration-processor")
+        compileOnly ("org.springframework.boot:spring-boot-configuration-processor")
 }

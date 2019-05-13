@@ -1,6 +1,5 @@
 package brainheap.user.rest
 
-import brainheap.common.tools.removeQuotes
 import brainheap.item.repo.ItemRepository
 import brainheap.user.model.User
 import brainheap.user.model.processors.UserProcessor
@@ -15,17 +14,19 @@ import javax.validation.Valid
 class UserController(private val repository: UserRepository, private val itemRepository: ItemRepository) {
 
     @GetMapping("/users")
-    fun filter(@RequestParam(required = false) email: String?): ResponseEntity<List<User>> {
-        val list = email?.let { removeQuotes(it) }?.let { repository.findByEmail(it) } ?: repository.findAll()
+    fun filter(@RequestParam(required = false) email: String?): ResponseEntity<User> {
+        val list = email?.let { repository.findByEmail(email) } ?: repository.findAll()
         return list
                 .takeIf { it.isNotEmpty() }
-                ?.let { ResponseEntity(it, HttpStatus.OK) }
+                ?.let { ResponseEntity(it[0], HttpStatus.OK) }
                 ?: ResponseEntity(HttpStatus.NOT_FOUND)
     }
 
     @PostMapping("/users")
-    fun create(@Valid @RequestBody userView: UserView): ResponseEntity<User> =
-        ResponseEntity(repository.save(UserProcessor.convert(userView)), HttpStatus.CREATED)
+    fun create(@Valid @RequestBody userView: UserView): ResponseEntity<User> {
+        require(repository.findByEmail(userView.email).isEmpty()) { "User with this email (${userView.email}) already exists" }
+        return ResponseEntity(repository.insert(UserProcessor.convert(userView)), HttpStatus.CREATED)
+    }
 
     @PutMapping("/users/{id}")
     fun update(@PathVariable id: String, @Valid @RequestBody userView: UserView): ResponseEntity<User> =

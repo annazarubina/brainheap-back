@@ -2,6 +2,13 @@ spring:
   data:
     mongodb:
       password:
+  security:
+    oauth2:
+      client:
+        registration:
+          facebook:
+            clientId: "testId"
+            clientSecret: "testSecret"
 translator:
   type: ibm
   ibm:
