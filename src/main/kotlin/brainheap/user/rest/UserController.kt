@@ -1,6 +1,5 @@
 package brainheap.user.rest
 
-import brainheap.item.model.Item
 import brainheap.item.repo.ItemRepository
 import brainheap.user.model.User
 import brainheap.user.model.processors.UserProcessor
@@ -8,16 +7,7 @@ import brainheap.user.repo.UserRepository
 import brainheap.user.rest.view.UserView
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.DeleteMapping
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.PutMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestHeader
-import org.springframework.web.bind.annotation.RequestParam
-import org.springframework.web.bind.annotation.RestController
-import java.util.stream.Collectors
+import org.springframework.web.bind.annotation.*
 import javax.validation.Valid
 
 @RestController
@@ -46,7 +36,7 @@ class UserController(private val repository: UserRepository, private val itemRep
 
     @DeleteMapping("/users/{id}")
     fun delete(@PathVariable id: String): ResponseEntity<User> {
-        require(itemRepository.findByUserId(id)?.isEmpty()?:true) { "Cannot delete user, he has saved items" }
+        require(itemRepository.findByUserId(id)?.isEmpty() ?: true) { "Cannot delete user, he has saved items" }
         return repository.findById(id).orElse(null)
                 ?.let { ResponseEntity(deleteUser(it), HttpStatus.OK) }
                 ?: ResponseEntity(HttpStatus.NOT_FOUND)
@@ -56,7 +46,7 @@ class UserController(private val repository: UserRepository, private val itemRep
     fun deleteAll(): ResponseEntity<List<User>> =
             repository.findAll().toList()
                     .takeIf { it.isNotEmpty() }
-                    ?.filter { itemRepository.findByUserId(it.id)?.isEmpty()?:true }
+                    ?.filter { itemRepository.findByUserId(it.id)?.isEmpty() ?: true }
                     ?.map { deleteUser(it) }
                     ?.let { ResponseEntity(it, HttpStatus.OK) } ?: ResponseEntity(HttpStatus.NO_CONTENT)
 

@@ -1,7 +1,7 @@
 version: '3.3'
 services:
   brainheap-back:
-# todo(innulic) move to specific version
+    # todo(innulic) move to specific version
     image: akisali/brainheap:latest
     container_name: "brainheap-back"
     ports:
@@ -14,7 +14,7 @@ services:
     image: mongo:3.6
     container_name: "brainheap-mongodb"
     environment:
-    - MONGO_INITDB_DATABASE=brainheap
+      - MONGO_INITDB_DATABASE=brainheap
     volumes:
       - ./data/db:/data/db
     ports:

@@ -1,9 +1,9 @@
 package brainheap.user.model
 
-import javax.validation.constraints.NotEmpty
-import org.springframework.data.mongodb.core.mapping.Document
 import org.springframework.data.annotation.Id
+import org.springframework.data.mongodb.core.mapping.Document
 import java.util.*
+import javax.validation.constraints.NotEmpty
 
 @Document(collection = "user")
 data class User(

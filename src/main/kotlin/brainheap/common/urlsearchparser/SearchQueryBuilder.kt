@@ -2,7 +2,6 @@ package brainheap.common.urlsearchparser
 
 import org.springframework.data.domain.Sort
 import org.springframework.data.mongodb.core.query.Criteria
-import org.springframework.data.mongodb.core.query.CriteriaDefinition
 import org.springframework.data.mongodb.core.query.Query
 
 class SearchQueryBuilder {
@@ -19,15 +18,16 @@ class SearchQueryBuilder {
     }
 
     fun addCriteria(criteria: Criteria?, userId: String?): SearchQueryBuilder {
-        val userIdCriteria = userId?.let {Criteria.where("userId").`is`(userId)}
+        val userIdCriteria = userId?.let { Criteria.where("userId").`is`(userId) }
         criteria
-                ?.let { userIdCriteria
-                        ?.let{ query.addCriteria(Criteria().andOperator(criteria, userIdCriteria)) }
-                        ?: query.addCriteria(criteria)
+                ?.let {
+                    userIdCriteria
+                            ?.let { query.addCriteria(Criteria().andOperator(criteria, userIdCriteria)) }
+                            ?: query.addCriteria(criteria)
                 }
                 ?: userIdCriteria
-                        ?.let{query.addCriteria(userIdCriteria)}
-                        ?: query
+                        ?.let { query.addCriteria(userIdCriteria) }
+                ?: query
         return this
     }
 }

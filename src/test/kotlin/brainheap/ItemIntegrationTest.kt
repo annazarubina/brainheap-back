@@ -28,7 +28,7 @@ import java.util.*
 @ActiveProfiles("development")
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 internal class ItemIntegrationTest(@Autowired val restTemplate: TestRestTemplate,
-                                   @Autowired val itemRepository: ItemRepository, @Autowired val userRepository: UserRepository){
+                                   @Autowired val itemRepository: ItemRepository, @Autowired val userRepository: UserRepository) {
 
     private val time: Date = getCurrentUTCTime()
     private var firstUserId: String? = null
@@ -49,7 +49,7 @@ internal class ItemIntegrationTest(@Autowired val restTemplate: TestRestTemplate
     }
 
     @Test
-    fun filter(){
+    fun filter() {
         //when
         val items = restTemplate.getForEntity("/items", List::class.java)
         //than
@@ -59,7 +59,7 @@ internal class ItemIntegrationTest(@Autowired val restTemplate: TestRestTemplate
     }
 
     @Test
-    fun create(){
+    fun create() {
         //given
         val newItem = ItemView("word", "description")
         val headers = HttpHeaders()
@@ -74,7 +74,7 @@ internal class ItemIntegrationTest(@Autowired val restTemplate: TestRestTemplate
 
 
     @Test
-    fun delete(){
+    fun delete() {
         //given
         val sizeBefore = itemRepository.findAll().size
         val itemToDelete = itemRepository.findAll()[0]
@@ -86,7 +86,7 @@ internal class ItemIntegrationTest(@Autowired val restTemplate: TestRestTemplate
 
         //than
         val sizeAfter = itemRepository.findAll().size
-        assertEquals(sizeBefore-1, sizeAfter)
+        assertEquals(sizeBefore - 1, sizeAfter)
         assertEquals(itemToDelete, deleted.body)
     }
 
