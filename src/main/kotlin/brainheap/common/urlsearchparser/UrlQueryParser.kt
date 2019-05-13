@@ -16,7 +16,7 @@ class UrlQueryParser(private val searchQueryBuilder: SearchQueryBuilder) {
     private fun createSearchCriteria(searchQuery: String?): Criteria? {
         val parser = UrlSearchQueryParser(searchQuery)
         val builder = CriteriaBuilder()
-        return searchQuery?.let {builder.build(parser.parse(), ::createConverter) }
+        return searchQuery?.let { builder.build(parser.parse(), ::createConverter) }
     }
 
     private fun createConverter(src: UrlSearchCriteria): Criteria? = UrlSearchToCriteriaConverter(src).toCriteria()

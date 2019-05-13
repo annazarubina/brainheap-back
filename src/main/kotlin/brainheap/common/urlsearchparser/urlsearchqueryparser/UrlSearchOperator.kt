@@ -8,7 +8,7 @@ enum class UrlSearchOperator(val precedence: Int) {
 
     companion object {
         @JvmStatic
-        fun ops() : Map<String, UrlSearchOperator> {
+        fun ops(): Map<String, UrlSearchOperator> {
             val map: MutableMap<String, UrlSearchOperator> = HashMap()
             map["AND"] = AND
             map["OR"] = OR
