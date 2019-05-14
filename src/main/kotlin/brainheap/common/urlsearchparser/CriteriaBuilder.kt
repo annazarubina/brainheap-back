@@ -1,7 +1,7 @@
 package brainheap.common.urlsearchparser
 
+import brainheap.common.urlsearchparser.urlsearchqueryparser.operator.LogicalOperator
 import brainheap.common.urlsearchparser.urlsearchqueryparser.UrlSearchCriteria
-import brainheap.common.urlsearchparser.urlsearchqueryparser.UrlSearchOperation
 import org.springframework.data.mongodb.core.query.Criteria
 import java.util.*
 
@@ -21,9 +21,9 @@ class CriteriaBuilder {
             } else {
                 val operand1 = specStack.pop()
                 val operand2 = specStack.pop()
-                if (mayBeOperand == UrlSearchOperation.AND_OPERATOR)
+                if (mayBeOperand == LogicalOperator.AND.string)
                     specStack.push(Criteria().andOperator(operand1, operand2))
-                else if (mayBeOperand == UrlSearchOperation.OR_OPERATOR)
+                else if (mayBeOperand== LogicalOperator.OR.string)
                     specStack.push(Criteria().orOperator(operand1, operand2))
             }
 

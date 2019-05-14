@@ -39,27 +39,29 @@ internal class ItemServiceTest(@Autowired val itemRepository: ItemRepository, @A
                 { assertEquals(itemService.filter(null, null, null, null, null)?.size, 4) },
                 { assertEquals(itemService.filter("1", null, null, null, null)?.size, 2) },
                 { assertEquals(itemService.filter("2", null, null, null, null)?.size, 2) },
-                { assertEquals(itemService.filter("1", "title:word1", null, null, null)?.size, 1) },
-                { assertEquals(itemService.filter("2", "title:word1", null, null, null)?.size, 0) },
-                { assertEquals(itemService.filter("1", "title:word1 OR title:word2", null, null, null)?.size, 2) },
-                { assertEquals(itemService.filter("1", "title:word3 OR title:word4", null, null, null)?.size, 0) },
-                { assertEquals(itemService.filter("2", "title:word1 OR title:word3", null, null, null)?.size, 1) },
-                { assertEquals(itemService.filter("2", "title:word1 OR title:word2", null, null, null)?.size, 0) },
-                { assertEquals(itemService.filter("1", "title:word1 AND title:word2", null, null, null)?.size, 0) }
+                { assertEquals(itemService.filter("1", "title==word1", null, null, null)?.size, 1) },
+                { assertEquals(itemService.filter("2", "title==word1", null, null, null)?.size, 0) },
+                { assertEquals(itemService.filter("1", "title==word1 OR title==word2", null, null, null)?.size, 2) },
+                { assertEquals(itemService.filter("1", "title==word3 OR title==word4", null, null, null)?.size, 0) },
+                { assertEquals(itemService.filter("2", "title==word1 OR title==word3", null, null, null)?.size, 1) },
+                { assertEquals(itemService.filter("2", "title==word1 OR title==word2", null, null, null)?.size, 0) },
+                { assertEquals(itemService.filter("1", "title==word1 AND title==word2", null, null, null)?.size, 0) }
         )
     }
 
     @Test
-    fun quotationsFilterTest() {
+    fun quotationsAndDifferentFormatsFilterTest() {
         itemRepository.insert(Item("word 1", "description 1", time, time, "1"))
         itemRepository.insert(Item("word 2", "description 2", time, time, "1"))
         itemRepository.insert(Item("word 3", "description 2", time, time, "2"))
         itemRepository.insert(Item("word 4", "description 4", time, time, "2"))
 
         assertAll("Check values",
-                { assertEquals(itemService.filter("1", "title:\"word 1\" OR title:\"word 2\"", null, null, null)?.size, 2) },
-                { assertEquals(itemService.filter("1", "( title:\"word 1\" OR title:\"word 2\" OR title:\"word 3\" ) AND description:\"description 2\"", null, null, null)?.size, 1) },
-                { assertEquals(itemService.filter(null, "( title:\"word 1\" OR title:\"word 2\" OR title:\"word 3\" ) AND description:\"description 2\"", null, null, null)?.size, 2) }
+                { assertEquals(itemService.filter("1", "title==\"word 1\" OR title==\"word 2\"", null, null, null)?.size, 2) },
+                { assertEquals(itemService.filter("1", "( title==\"word 1\" OR title==\"word 2\" OR title==\"word 3\" ) AND description==\"description 2\"", null, null, null)?.size, 1) },
+                { assertEquals(itemService.filter(null, "( title==\"word 1\" OR title==\"word 2\" OR title==\"word 3\" ) AND description==\"description 2\"", null, null, null)?.size, 2) },
+                { assertEquals(itemService.filter("1", "(title==\"word 1\" OR title==\"word 2\" OR title==\"word 3\") AND description==\"description 2\"", null, null, null)?.size, 1) },
+                { assertEquals(itemService.filter("1", "(title == \"word 1\" OR title==\"word 2\" OR title==\"word 3\" ) AND description ==\"description 2\"", null, null, null)?.size, 1) }
         )
     }
 

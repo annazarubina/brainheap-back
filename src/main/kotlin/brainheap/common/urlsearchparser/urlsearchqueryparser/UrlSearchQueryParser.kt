@@ -1,17 +1,17 @@
 package brainheap.common.urlsearchparser.urlsearchqueryparser
 
-import com.google.common.base.Joiner
+import brainheap.common.urlsearchparser.urlsearchqueryparser.operator.BracketOperator
+import brainheap.common.urlsearchparser.urlsearchqueryparser.operator.LogicalOperator
+import brainheap.common.urlsearchparser.urlsearchqueryparser.token.BracketOperatorToken
+import brainheap.common.urlsearchparser.urlsearchqueryparser.token.CompareOperatorToken
+import brainheap.common.urlsearchparser.urlsearchqueryparser.token.LogicalOperatorToken
+import brainheap.common.urlsearchparser.urlsearchqueryparser.token.OperatorToken
+import brainheap.common.urlsearchparser.urlsearchqueryparser.token.OperatorTokenFactory
 import java.util.*
-import java.util.regex.Pattern
+import kotlin.collections.ArrayList
 
 class UrlSearchQueryParser(private val string: String?) {
     private var pos: Int = 0
-
-    companion object {
-        @JvmStatic
-        var SpecCriteriaRegex = Pattern.compile("^(\\w+?)(" + Joiner.on("|")
-                .join(UrlSearchOperation.SIMPLE_OPERATION_SET) + ")(\\p{Punct}?)([\\w\\s]+?)(\\p{Punct}?)$")!!
-    }
 
     fun parse(): Deque<*> {
         this.pos = 0
@@ -20,28 +20,30 @@ class UrlSearchQueryParser(private val string: String?) {
         val stack = LinkedList<String>()
 
         readTokens().stream().forEach { token ->
-            when {
-                UrlSearchOperator.ops().containsKey(token) -> {
-                    while (!stack.isEmpty() && isHigherPrecedenceOperator(token, stack.peek()))
-                        output.push(if (stack.pop()
-                                        .equals(UrlSearchOperation.OR_OPERATOR, ignoreCase = true))
-                            UrlSearchOperation.OR_OPERATOR
-                        else
-                            UrlSearchOperation.AND_OPERATOR)
-                    stack.push(if (token.equals(UrlSearchOperation.OR_OPERATOR, ignoreCase = true)) UrlSearchOperation.OR_OPERATOR else UrlSearchOperation.AND_OPERATOR)
+            when (token.type()) {
+                OperatorToken.Type.LOGICAL -> {
+                    while (!stack.isEmpty() && isHigherOperator((token as LogicalOperatorToken).operator.string, stack.peek()))
+                        output.push(
+                                if (stack.pop() == LogicalOperator.OR.string)
+                                    LogicalOperator.OR.string
+                                else
+                                    LogicalOperator.AND.string
+                        )
+                    stack.push((token as LogicalOperatorToken).operator.string)
                 }
-                token == UrlSearchOperation.LEFT_PARANTHESIS -> stack.push(UrlSearchOperation.LEFT_PARANTHESIS)
-                token == UrlSearchOperation.RIGHT_PARANTHESIS -> {
-                    while (stack.peek() != UrlSearchOperation.LEFT_PARANTHESIS)
-                        output.push(stack.pop())
-                    stack.pop()
-                }
-                else -> {
-
-                    val matcher = SpecCriteriaRegex.matcher(token)
-                    while (matcher.find()) {
-                        output.push(UrlSearchCriteria(matcher.group(1), matcher.group(2), matcher.group(3), matcher.group(4), matcher.group(5)))
+                OperatorToken.Type.BRACKET -> {
+                    when ((token as BracketOperatorToken).operator) {
+                        BracketOperator.LEFT -> stack.push(BracketOperator.LEFT.string)
+                        BracketOperator.RIGHT -> {
+                            while (stack.peek() != BracketOperator.RIGHT.string)
+                                output.push(stack.pop())
+                            stack.pop()
+                        }
                     }
+                }
+                OperatorToken.Type.COMPARE -> {
+                    val conditionToken = token as CompareOperatorToken
+                    output.push(UrlSearchCriteria(conditionToken.left, conditionToken.operator, conditionToken.right))
                 }
             }
         }
@@ -52,11 +54,11 @@ class UrlSearchQueryParser(private val string: String?) {
         return output
     }
 
-    private fun readTokens(): ArrayList<String> {
-        val tokens = ArrayList<String>()
+    private fun readTokens(): List<OperatorToken> {
+        val tokens = ArrayList<OperatorToken>()
         string?.let {
             var token = readNextToken(string)
-            while (token.isNotEmpty()) {
+            while (token != null) {
                 tokens.add(token)
                 token = readNextToken(string)
             }
@@ -64,41 +66,37 @@ class UrlSearchQueryParser(private val string: String?) {
         return tokens
     }
 
-    private fun readNextToken(string: String): String {
-        var token = ""
+    private fun readNextToken(string: String): OperatorToken? {
+        val startPos = pos
         var hasQuotations = false
         var prevChar: Char? = null
         while (pos < string.length) {
+            if (!hasQuotations) {
+                OperatorTokenFactory.getToken(string, pos, startPos)?.let {
+                    pos += it.length
+                    return it
+                }
+            }
             val char = string[pos]
             pos++
             when (char) {
-                ' ' -> {
-                    when {
-                        token.isEmpty() -> {
-                        }
-                        hasQuotations -> {
-                            token += char
-                        }
-                        else -> {
-                            return token
-                        }
-                    }
-                }
                 '\"' -> {
-                    token += char
-                    if (prevChar?.equals('\\') == false) {
+                    if (prevChar?.equals('\\') != true) {
                         hasQuotations = !hasQuotations
                     }
-                }
-                else -> {
-                    token += char
                 }
             }
             prevChar = char
         }
-        return token
+        return null
     }
 
-    private fun isHigherPrecedenceOperator(currOp: String, prevOp: String) = getPrecedence(prevOp) >= getPrecedence(currOp)
-    private fun getPrecedence(op: String) = UrlSearchOperator.ops()[op]?.precedence ?: -1
+    private fun isHigherOperator(currOp: String, prevOp: String) = (getOperatorRange(prevOp) >= getOperatorRange(currOp))
+    private fun getOperatorRange(op: String): Int {
+        return when (op) {
+            LogicalOperator.AND.string -> 2
+            LogicalOperator.OR.string -> 1
+            else -> -1
+        }
+    }
 }
