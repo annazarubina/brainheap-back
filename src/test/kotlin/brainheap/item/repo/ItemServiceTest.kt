@@ -65,6 +65,29 @@ internal class ItemServiceTest(@Autowired val itemRepository: ItemRepository, @A
         )
     }
 
+    @Test
+    fun testTimeSpans() {
+        val time1String = "Sat, 12 Aug 1995 13:30:00 GMT"
+        val time2String = "Sat, 18 May 2019 13:30:00 GMT"
+        val time3String = "Sun, 19 May 2019 13:30:00 GMT"
+
+        val time1 = Date(time1String)
+        val time2 = Date(time2String)
+        val time3 = Date(time3String)
+
+        itemRepository.insert(Item("word 1", "description 1", time1, time1, "1"))
+        itemRepository.insert(Item("word 2", "description 2", time1, time1, "1"))
+        itemRepository.insert(Item("word 1", "description 2", time2, time2, "2"))
+        itemRepository.insert(Item("word 2", "description 2", time3, time3, "2"))
+
+        assertAll("Check values",
+                { assertEquals(itemService.filter(null, "( title==\"word 1\" OR title==\"word 2\" OR title==\"word 3\" ) AND description==\"description 2\"", null, null, null)?.size, 3) },
+                { assertEquals(itemService.filter(null, "( title==\"word 1\" OR title==\"word 2\") AND created==\"$time1String\"", null, null, null)?.size, 2) },
+                { assertEquals(itemService.filter(null, "( title==\"word 1\" OR title==\"word 2\") AND created>=\"$time1String\"", null, null, null)?.size, 4) },
+                { assertEquals(itemService.filter(null, "( title==\"word 1\" OR title==\"word 2\") AND created>\"$time1String\"", null, null, null)?.size, 2) }
+        )
+    }
+
     @AfterEach
     fun tearDown() {
         itemRepository.deleteAll()

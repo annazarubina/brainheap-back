@@ -35,7 +35,7 @@ class UrlSearchQueryParser(private val string: String?) {
                     when ((token as BracketOperatorToken).operator) {
                         BracketOperator.LEFT -> stack.push(BracketOperator.LEFT.string)
                         BracketOperator.RIGHT -> {
-                            while (stack.peek() != BracketOperator.RIGHT.string)
+                            while (stack.peek() != BracketOperator.LEFT.string)
                                 output.push(stack.pop())
                             stack.pop()
                         }

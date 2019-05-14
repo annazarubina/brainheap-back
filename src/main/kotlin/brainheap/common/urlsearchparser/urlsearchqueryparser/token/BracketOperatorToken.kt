@@ -2,7 +2,7 @@ package brainheap.common.urlsearchparser.urlsearchqueryparser.token
 
 import brainheap.common.urlsearchparser.urlsearchqueryparser.operator.BracketOperator
 
-class BracketOperatorToken(length : Int, val operator: BracketOperator) : OperatorToken(length) {
+class BracketOperatorToken(length: Int, val operator: BracketOperator) : OperatorToken(length) {
     override fun type() = Type.BRACKET
 
     companion object {
@@ -17,7 +17,11 @@ class BracketOperatorToken(length : Int, val operator: BracketOperator) : Operat
         }
 
         private fun hasSubstringOnPos(string: String, pos: Int, substring: String): Boolean =
-                string.substring(pos, pos + substring.length - 1) == substring
+                string
+                        .takeIf { pos >= 0 && pos + substring.length <= string.length }
+                        ?.substring(pos, pos + substring.length)
+                        ?.let { it == substring }
+                        ?: false
 
         private fun prevCharIsSpaceOnNone(string: String, pos: Int): Boolean =
                 string.getOrNull(pos - 1)?.equals(' ') ?: true
