@@ -3,14 +3,19 @@ server:
 spring:
   data:
     mongodb:
-      uri: mongodb://brainheap-mongodb/brainheap
+      uri: mongodb://localhost:27017/brainheap
       port: 27017
-
+  security:
+    oauth2:
+      client:
+        clientId: 418386422290943
+        clientSecret: 3f23692b595de4ffe1d52e36b1daf069
+      resource:
+        token-info-uri: https://graph.facebook.com/v3.0/oauth/access_token
 facebook:
   client:
     clientId: 418386422290943
     clientSecret: 3f23692b595de4ffe1d52e36b1daf069
-    redirectUriTemplate: "{baseUrl}/oauth2/callback/{registrationId}"
     userAuthorizationUri: https://www.facebook.com/v3.0/dialog/oauth
     accessTokenUri: https://graph.facebook.com/v3.0/oauth/access_token
     tokenName: oauth_token
