@@ -104,7 +104,7 @@ internal class ItemServiceTest(@Autowired val itemRepository: ItemRepository, @A
         itemRepository.insert(Item("aa", "description 2", time2, time2, "1"))
         itemRepository.insert(Item("cc", "description 2", time2, time2, "2"))
 
-        assertEquals(itemService.filter(null, null, null, null, null)?.first()?.title, "bb" )
+        assertEquals(itemService.filter(null, null, null, null, null)?.first()?.title, "dd" )
         assertEquals(itemService.filter(null, null, "title", null, null)?.first()?.title, "aa" )
         assertEquals(itemService.filter(null, null, "created, title", null, null)?.first()?.title, "ab" )
         assertEquals(itemService.filter(null, null, "\"created\", \"title\"", null, null)?.first()?.title, "ab" )
