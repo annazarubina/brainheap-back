@@ -13,7 +13,7 @@ class SearchQueryBuilder {
     }
 
     fun addOrder(fieldName: String): SearchQueryBuilder {
-        query.with(Sort.by(Sort.Direction.DESC, fieldName))
+        query.with(Sort.by(Sort.Direction.ASC, fieldName))
         return this
     }
 

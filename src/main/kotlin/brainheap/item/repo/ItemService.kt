@@ -20,7 +20,7 @@ class ItemService(private val template: MongoTemplate) {
 
     private fun getSearchQuery(userId: String?, query: String?, orderBy: String?): Query {
         val builder = SearchQueryBuilder()
-        val parser = UrlQueryParser(builder)
+        val parser = UrlQueryParser(builder, Item::class.java)
         parser.parse(userId, query, orderBy)
         return builder.build()
     }

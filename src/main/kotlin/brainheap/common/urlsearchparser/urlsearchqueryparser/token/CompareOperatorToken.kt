@@ -1,14 +1,13 @@
 package brainheap.common.urlsearchparser.urlsearchqueryparser.token
 
-import brainheap.common.tools.removeQuotes
+import brainheap.common.tools.removeQuotesAndTrimWhitespaces
 import brainheap.common.urlsearchparser.urlsearchqueryparser.operator.CompareOperator
-import org.springframework.util.StringUtils
 
 class CompareOperatorToken(length: Int, val operator: CompareOperator, left: String, right: String) : OperatorToken(length) {
     override fun type() = Type.COMPARE
 
-    val left: String = removeQuotes(StringUtils.trimTrailingWhitespace(StringUtils.trimLeadingWhitespace(left)))!!
-    val right: String = removeQuotes(StringUtils.trimTrailingWhitespace(StringUtils.trimLeadingWhitespace(right)))!!
+    val left: String = removeQuotesAndTrimWhitespaces(left)!!
+    val right: String = removeQuotesAndTrimWhitespaces(right)!!
 
     companion object {
         fun getToken(string: String, pos: Int, startPos: Int): CompareOperatorToken? {
@@ -54,9 +53,9 @@ class CompareOperatorToken(length: Int, val operator: CompareOperator, left: Str
                     }
                     ')' -> if (!hasQuotations) return result
                     '\"' -> {
-                        val skip : Boolean = string.takeIf{ pos > startPos }?.get(pos - 1)?.equals('\\')?:false
-                        if(!skip) {
-                            hasQuotations =! hasQuotations
+                        val skip: Boolean = string.takeIf { pos > startPos }?.get(pos - 1)?.equals('\\') ?: false
+                        if (!skip) {
+                            hasQuotations = !hasQuotations
                         }
                     }
                 }

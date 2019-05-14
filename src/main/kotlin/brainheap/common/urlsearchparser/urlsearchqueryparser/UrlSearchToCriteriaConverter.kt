@@ -1,11 +1,10 @@
 package brainheap.common.urlsearchparser.urlsearchqueryparser
 
 import brainheap.common.urlsearchparser.urlsearchqueryparser.operator.CompareOperator
-import brainheap.item.model.Item
 import org.springframework.data.mongodb.core.query.Criteria
 
 
-class UrlSearchToCriteriaConverter(private val searchCriteria: UrlSearchCriteria) {
+class UrlSearchToCriteriaConverter<T>(private val searchCriteria: UrlSearchCriteria, private val type: Class<T>) {
     fun toCriteria(): Criteria? {
         return when (searchCriteria.operator) {
             CompareOperator.EQUAL -> Criteria.where(searchCriteria.key).`is`(getFieldObject())
@@ -19,8 +18,8 @@ class UrlSearchToCriteriaConverter(private val searchCriteria: UrlSearchCriteria
     }
 
     private fun getFieldObject(): Any {
-        for (field in Item::class.java.declaredFields) {
-            if(field.type != String::class.java && field.name == searchCriteria.key) {
+        for (field in type.declaredFields) {
+            if (field.type != String::class.java && field.name == searchCriteria.key) {
                 for (constructor in field.type.constructors) {
                     if (constructor.parameterTypes.size == 1 && constructor.parameterTypes[0] == String::class.java) {
                         return constructor.newInstance(searchCriteria.value)
