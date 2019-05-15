@@ -1,12 +1,15 @@
 package brainheap.oauth.config
 
+import brainheap.oauth.extention.configure
 import brainheap.oauth.security.OAuth2PrincipalExtractor
 import brainheap.oauth.security.OAuth2SsoAuthenticationSuccessHandler
 import brainheap.oauth.service.UserService
+import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.boot.autoconfigure.security.oauth2.resource.UserInfoTokenServices
 import org.springframework.boot.web.servlet.FilterRegistrationBean
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter
@@ -17,15 +20,8 @@ import org.springframework.security.oauth2.client.filter.OAuth2ClientAuthenticat
 import org.springframework.security.oauth2.client.filter.OAuth2ClientContextFilter
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableOAuth2Client
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter
-import org.springframework.web.filter.CompositeFilter
-import brainheap.oauth.extention.configure
-import org.springframework.beans.factory.annotation.Qualifier
-import org.springframework.security.authentication.AuthenticationManager
-import org.springframework.security.oauth2.client.DefaultOAuth2ClientContext
 import org.springframework.web.context.request.RequestContextListener
-
-
-
+import org.springframework.web.filter.CompositeFilter
 
 
 @Configuration
