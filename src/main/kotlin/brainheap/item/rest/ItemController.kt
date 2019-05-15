@@ -68,7 +68,7 @@ class ItemController(private val repository: ItemRepository, private val service
         require(userRepository.findById(userId).isPresent) { "User with this id ($userId) is not registered" }
         return repository.findByUserIdAndId(userId, id)
                 ?.let { ItemProcessor.update(it, itemView, userId) }
-                ?.let { repository.save(it) }
+                ?.let { service.save(it) }
                 ?.let { ResponseEntity(it, HttpStatus.OK) }
                 ?: ResponseEntity(HttpStatus.NO_CONTENT)
     }

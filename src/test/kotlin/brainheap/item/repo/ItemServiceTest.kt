@@ -3,6 +3,9 @@ package brainheap.item.repo
 
 import brainheap.common.tools.getCurrentUTCTime
 import brainheap.item.model.Item
+import brainheap.item.model.processors.ItemProcessor
+import brainheap.item.rest.view.ItemView
+import net.bytebuddy.utility.RandomString
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
@@ -23,6 +26,10 @@ internal class ItemServiceTest(@Autowired val itemRepository: ItemRepository, @A
 
     private val itemService = ItemService(template)
     private val time: Date = getCurrentUTCTime()
+
+    private val TITLE: String = RandomString.make()
+    private val DESCRIPTION: String = RandomString.make()
+    private val USERID: String = UUID.randomUUID().toString()
 
     @BeforeEach
     fun setUp() {
@@ -104,10 +111,10 @@ internal class ItemServiceTest(@Autowired val itemRepository: ItemRepository, @A
         itemRepository.insert(Item("aa", "description 2", time2, time2, "1"))
         itemRepository.insert(Item("cc", "description 2", time2, time2, "2"))
 
-        assertEquals(itemService.filter(null, null, null, null, null)?.first()?.title, "dd" )
-        assertEquals(itemService.filter(null, null, "title", null, null)?.first()?.title, "aa" )
-        assertEquals(itemService.filter(null, null, "created, title", null, null)?.first()?.title, "ab" )
-        assertEquals(itemService.filter(null, null, "\"created\", \"title\"", null, null)?.first()?.title, "ab" )
+        assertEquals(itemService.filter(null, null, null, null, null)?.first()?.title, "dd")
+        assertEquals(itemService.filter(null, null, "title", null, null)?.first()?.title, "aa")
+        assertEquals(itemService.filter(null, null, "created, title", null, null)?.first()?.title, "ab")
+        assertEquals(itemService.filter(null, null, "\"created\", \"title\"", null, null)?.first()?.title, "ab")
     }
 
     @Test
@@ -119,9 +126,47 @@ internal class ItemServiceTest(@Autowired val itemRepository: ItemRepository, @A
         itemRepository.insert(Item("cc", "description 2", time, time, "2"))
 
         val filtered = itemService.filter(null, null, "created, title", 4, 2)
-        assertAll ("Check values",
-                {assertEquals(filtered?.first()?.title, "dd" )},
-                {assertEquals(filtered?.size, 1 )}
+        assertAll("Check values",
+                { assertEquals(filtered?.first()?.title, "dd") },
+                { assertEquals(filtered?.size, 1) }
+        )
+    }
+
+    @Test
+    fun save() {
+        val item = ItemProcessor.convert(ItemView(TITLE, DESCRIPTION), USERID)
+        val res = itemService.save(item)
+        val items = itemService.getAll()
+        assertAll("Check values",
+                { assertEquals(items?.first()?.title, TITLE) },
+                { assertEquals(items?.size, 1) },
+                { assertEquals(items?.first(), res) }
+        )
+    }
+
+    @Test
+    fun saveTwoEqualOneByOne() {
+        val res1 = itemService.save(ItemProcessor.convert(ItemView(TITLE, DESCRIPTION), USERID))
+        val res2 = itemService.save(ItemProcessor.convert(ItemView(TITLE, DESCRIPTION), USERID))
+        val items = itemService.getAll()
+        assertAll("Check values",
+                { assertEquals(res1.id, res2.id) },
+                { assertEquals(items?.first()?.title, TITLE) },
+                { assertEquals(items?.size, 1) }
+        )
+    }
+
+    @Test
+    fun saveTwoEqualNotOneByOne() {
+        val res1 = itemService.save(ItemProcessor.convert(ItemView(TITLE, DESCRIPTION), USERID))
+        val res2 = itemService.save(ItemProcessor.convert(ItemView(TITLE + "_changed", DESCRIPTION), USERID))
+        val res3 = itemService.save(ItemProcessor.convert(ItemView(TITLE, DESCRIPTION), USERID))
+        val items = itemService.getAll()
+        assertAll("Check values",
+                { assert(res1.id != res2.id) },
+                { assert(res1.id != res3.id) },
+                { assertEquals(items?.first()?.title, TITLE) },
+                { assertEquals(items?.size, 3) }
         )
     }
 
