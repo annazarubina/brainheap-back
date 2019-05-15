@@ -36,6 +36,8 @@ class UserController(private val repository: UserRepository, private val itemRep
 
     @DeleteMapping("/users/{id}")
     fun delete(@PathVariable id: String): ResponseEntity<User> {
+        //TODO(ekisali): Improve the error message if require is false.
+        // Now is "Error while extracting response for type [class brainheap.user.model.User] and content type [application/json;charset=UTF-8]"
         require(itemRepository.findByUserId(id)?.isEmpty() ?: true) { "Cannot delete user, he has saved items" }
         return repository.findById(id).orElse(null)
                 ?.let { ResponseEntity(deleteUser(it), HttpStatus.OK) }
