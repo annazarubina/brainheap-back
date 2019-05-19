@@ -4,3 +4,6 @@ spring:
       password: ENC(QKvBdCug+2Wu/Or8fG4HOgplsvpNHkaUC2ZQu3C7bJ3DG/ecn2773w==)
   main:
     banner-mode: 'off'
+ibm-translator:
+  rest:
+    apikey: ENC(/Ud7rjgOw08ZZNDtvzfyHGkD3rq8S17dAyCoOpN39AzAS6FCRg52ZqBlQLR4JnxkqmC5dcZYu7E=)
