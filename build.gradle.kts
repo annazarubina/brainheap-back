@@ -38,6 +38,7 @@ dependencies {
     compile("com.github.ulisesbocchio:jasypt-spring-boot-starter:2.1.1")
     compile("com.netflix.feign:feign-core:8.18.0")
     compile("com.netflix.feign:feign-gson:8.18.0")
+    compile("com.google.cloud:google-cloud-translate:1.62.0")
 
     testCompile("org.springframework.boot:spring-boot-starter-test") {
         exclude(module = "junit")

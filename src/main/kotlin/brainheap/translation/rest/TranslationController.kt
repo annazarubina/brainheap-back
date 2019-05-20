@@ -1,6 +1,7 @@
 package brainheap.translation.rest
 
 import brainheap.translation.service.TranslationService
+import brainheap.translation.service.ibm.IbmTranslationService
 import brainheap.user.repo.UserRepository
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
