@@ -1,4 +1,21 @@
 spring:
+  security:
+    oauth2:
+      client:
+        provider:
+          facebook:
+            authorizationUri: https://www.facebook.com/v3.0/dialog/oauth
+            tokenUri: https://graph.facebook.com/v3.0/oauth/access_token
+            userInfoUri: https://graph.facebook.com/v3.0/me?fields=id,first_name,middle_name,last_name,name,email,verified,is_verified,picture.width(250).height(250)
+        registration:
+          facebook:
+            provider: facebook
+            clientId: 418386422290943
+            clientSecret: ENC(7ganZ1+hR6CKwUIIWvGYBlZ0/HYm6m39o/E6gaImWWv8Wwu998zkrBHj7fScISTO)
+            redirectUriTemplate: "{baseUrl}/oauth2/callback/{registrationId}"
+            scope:
+              - email
+              - public_profile
   data:
     mongodb:
       password: ENC(QKvBdCug+2Wu/Or8fG4HOgplsvpNHkaUC2ZQu3C7bJ3DG/ecn2773w==)
