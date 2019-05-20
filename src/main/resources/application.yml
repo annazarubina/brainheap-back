@@ -18,6 +18,6 @@ spring:
               - public_profile
   data:
     mongodb:
-      password: ENC(a6HKp3Tw3IDoakQhKrKMWuK9hFh/nREd)
+      password: ENC(1Tz424M3sEfs+2GpWSSds6BQj7ZKHledXWk+ZvXk1t37chEcK+g3Xw==)
   main:
     banner-mode: 'off'
