@@ -9,6 +9,7 @@ import brainheap.item.rest.view.ItemView
 import brainheap.user.repo.UserRepository
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
 import javax.validation.Valid
@@ -32,16 +33,20 @@ class ItemController(private val repository: ItemRepository, private val service
     fun createAll(@RequestHeader(value = "Authorization") userId: String, @Valid @RequestBody itemViews: List<ItemView>):
             ResponseEntity<List<Item>> {
         require(userRepository.findById(userId).isPresent) { "User with this id ($userId) is not registered" }
-        return itemViews.map { repository.save(ItemProcessor.convert(it, userId)) }
+        return itemViews
+                .map { ItemProcessor.convert(it, userId) }
                 .takeIf { it.isNotEmpty() }
-                ?.let { ResponseEntity(it, HttpStatus.OK) } ?: ResponseEntity(HttpStatus.NO_CONTENT)
+                ?.let { repository.saveAll(it) }
+                ?.let { ResponseEntity(it, HttpStatus.OK) }
+                ?: ResponseEntity(HttpStatus.NO_CONTENT)
     }
 
     @GetMapping("/items/{id}")
     fun get(@RequestHeader(value = "Authorization") userId: String, @PathVariable id: String): ResponseEntity<Item> {
         require(userRepository.findById(userId).isPresent) { "User with this id ($userId) is not registered" }
         return repository.findByUserIdAndId(userId, id)
-                ?.let { ResponseEntity(it, HttpStatus.OK) } ?: ResponseEntity(HttpStatus.NO_CONTENT)
+                ?.let { ResponseEntity(it, HttpStatus.OK) }
+                ?: ResponseEntity(HttpStatus.NO_CONTENT)
     }
 
     @PostMapping("/items/new")
@@ -55,7 +60,9 @@ class ItemController(private val repository: ItemRepository, private val service
                @Valid @RequestBody itemView: ItemView): ResponseEntity<Item> {
         require(userRepository.findById(userId).isPresent) { "User with this id ($userId) is not registered" }
         return repository.findByUserIdAndId(userId, id)
-                ?.let { ResponseEntity(repository.save(ItemProcessor.update(it, itemView, userId)), HttpStatus.OK) }
+                ?.let { ItemProcessor.update(it, itemView, userId) }
+                ?.let { service.save(it) }
+                ?.let { ResponseEntity(it, HttpStatus.OK) }
                 ?: ResponseEntity(HttpStatus.NO_CONTENT)
     }
 
@@ -63,7 +70,8 @@ class ItemController(private val repository: ItemRepository, private val service
     fun delete(@RequestHeader(value = "Authorization") userId: String, @PathVariable id: String): ResponseEntity<Item> {
         require(userRepository.findById(userId).isPresent) { "User with this id ($userId) is not registered" }
         return repository.findByUserIdAndId(userId, id)
-                ?.let { ResponseEntity(deleteItem(it), HttpStatus.OK) } ?: ResponseEntity(HttpStatus.NO_CONTENT)
+                ?.let { ResponseEntity(deleteItem(it), HttpStatus.OK) }
+                ?: ResponseEntity(HttpStatus.NO_CONTENT)
     }
 
     @DeleteMapping("/items")
@@ -72,7 +80,8 @@ class ItemController(private val repository: ItemRepository, private val service
         return repository.findByUserId(userId)
                 ?.takeIf { it.isNotEmpty() }
                 ?.map { deleteItem(it) }
-                ?.let { ResponseEntity(it, HttpStatus.OK) } ?: ResponseEntity(HttpStatus.NO_CONTENT)
+                ?.let { ResponseEntity(it, HttpStatus.OK) }
+                ?: ResponseEntity(HttpStatus.NO_CONTENT)
     }
 
     private fun deleteItem(item: Item): Item {

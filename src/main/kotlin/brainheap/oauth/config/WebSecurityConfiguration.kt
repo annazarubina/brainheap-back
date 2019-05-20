@@ -1,6 +1,7 @@
 package brainheap.oauth.config
 
 import brainheap.oauth.extention.configure
+import brainheap.oauth.handler.RefererRedirectionAuthenticationSuccessHandle
 import brainheap.oauth.security.OAuth2PrincipalExtractor
 import brainheap.oauth.security.OAuth2SsoAuthenticationSuccessHandler
 import brainheap.oauth.service.UserService
@@ -35,11 +36,20 @@ class WebSecurityConfiguration(@Qualifier("oauth2ClientContext") private val oau
     }
 
     override fun configure(http: HttpSecurity) = configure(http) {
+
         antMatcher("/**")
                 .authorizeRequests().antMatchers("/", "/login**", "/assets/**").permitAll()
                 .anyRequest().authenticated()
-                .and().formLogin().loginPage("/login").permitAll()
-                .and().addFilterBefore(ssoFilter(), BasicAuthenticationFilter::class.java)
+                .and().formLogin().disable()
+                .httpBasic().disable()
+                .oauth2Login().redirectionEndpoint().baseUri("/oauth2/callback/*")
+
+                http.addFilterBefore(ssoFilter(), BasicAuthenticationFilter::class.java)
+    }
+
+    @Bean
+    fun refererAuthenticationSuccessHandler(): RefererRedirectionAuthenticationSuccessHandle {
+        return RefererRedirectionAuthenticationSuccessHandle()
     }
 
     @Bean

@@ -1,5 +1,6 @@
 package brainheap.common.urlsearchparser
 
+import brainheap.common.urlsearchparser.sortby.SortBy
 import org.springframework.data.domain.Sort
 import org.springframework.data.mongodb.core.query.Criteria
 import org.springframework.data.mongodb.core.query.Query
@@ -12,8 +13,8 @@ class SearchQueryBuilder {
         return query
     }
 
-    fun addOrder(fieldName: String): SearchQueryBuilder {
-        query.with(Sort.by(Sort.Direction.DESC, fieldName))
+    fun addOrder(sortBy: SortBy): SearchQueryBuilder {
+        query.with(Sort.by(sortBy.direction, sortBy.fieldName))
         return this
     }
 

@@ -1,20 +1,32 @@
 package brainheap.common.urlsearchparser.urlsearchqueryparser
 
-import brainheap.common.urlsearchparser.urlsearchqueryparser.UrlSearchOperation
+import brainheap.common.urlsearchparser.urlsearchqueryparser.operator.CompareOperator
 import org.springframework.data.mongodb.core.query.Criteria
 
-class UrlSearchToCriteriaConverter(private val searchCriteria: UrlSearchCriteria) {
+
+class UrlSearchToCriteriaConverter<T>(private val searchCriteria: UrlSearchCriteria, private val type: Class<T>) {
     fun toCriteria(): Criteria? {
-        return when (searchCriteria.operation) {
-            UrlSearchOperation.EQUALITY -> Criteria.where(searchCriteria.key).`is`(searchCriteria.value)
-            UrlSearchOperation.NEGATION -> Criteria.where(searchCriteria.key).ne(searchCriteria.value)
-            UrlSearchOperation.GREATER_THAN -> Criteria.where(searchCriteria.key).gte(searchCriteria.value)
-            UrlSearchOperation.LESS_THAN -> Criteria.where(searchCriteria.key).lte(searchCriteria.value)
-            UrlSearchOperation.LIKE -> Criteria.where(searchCriteria.key).regex(searchCriteria.value)
-            UrlSearchOperation.STARTS_WITH -> Criteria.where(searchCriteria.key).regex(searchCriteria.value + "%")
-            UrlSearchOperation.ENDS_WITH -> Criteria.where(searchCriteria.key).regex("%" + searchCriteria.value)
-            UrlSearchOperation.CONTAINS -> Criteria.where(searchCriteria.key).regex("%" + searchCriteria.value + "%")
-            else -> null
+        return when (searchCriteria.operator) {
+            CompareOperator.EQUAL -> Criteria.where(searchCriteria.key).`is`(getFieldObject())
+            CompareOperator.NOT_EQUAL -> Criteria.where(searchCriteria.key).ne(getFieldObject())
+            CompareOperator.GREATER -> Criteria.where(searchCriteria.key).gt(getFieldObject())
+            CompareOperator.GREATER_OR_EQUAL -> Criteria.where(searchCriteria.key).gte(getFieldObject())
+            CompareOperator.LESS -> Criteria.where(searchCriteria.key).lt(getFieldObject())
+            CompareOperator.LESS_OR_EQUAL -> Criteria.where(searchCriteria.key).lte(getFieldObject())
+            CompareOperator.LIKE -> Criteria.where(searchCriteria.key).regex(searchCriteria.value)
         }
+    }
+
+    private fun getFieldObject(): Any {
+        for (field in type.declaredFields) {
+            if (field.type != String::class.java && field.name == searchCriteria.key) {
+                for (constructor in field.type.constructors) {
+                    if (constructor.parameterTypes.size == 1 && constructor.parameterTypes[0] == String::class.java) {
+                        return constructor.newInstance(searchCriteria.value)
+                    }
+                }
+            }
+        }
+        return searchCriteria.value
     }
 }

@@ -29,7 +29,7 @@ import java.util.*
 
 
 @ExtendWith(SpringExtension::class)
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT )
 @ActiveProfiles("development")
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 //TODO(innulic) exclude oauth from integration test until it will not be ready to merge to master

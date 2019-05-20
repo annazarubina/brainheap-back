@@ -1,11 +1,17 @@
 package brainheap
 
+import brainheap.oauth.properties.AppOauthProperties
+import brainheap.translation.service.client.IbmTranslatorProperties
 import com.ulisesbocchio.jasyptspringboot.annotation.EnableEncryptableProperties
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration
 import org.springframework.boot.autoconfigure.SpringBootApplication
+import org.springframework.boot.autoconfigure.security.oauth2.client.OAuth2ClientProperties
+import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.runApplication
 
 @SpringBootApplication
 @EnableEncryptableProperties
+@EnableConfigurationProperties(value = [IbmTranslatorProperties::class, AppOauthProperties::class, OAuth2ClientProperties::class])
 class Application
 
 fun main(args: Array<String>) {

@@ -1,10 +1,8 @@
 package brainheap.oauth.properties
 
 import org.springframework.boot.context.properties.ConfigurationProperties
-import org.springframework.boot.context.properties.EnableConfigurationProperties
 
 @ConfigurationProperties(prefix = "app")
-@EnableConfigurationProperties(AppOauthProperties::class)
 class AppOauthProperties {
 
     val auth = Auth()

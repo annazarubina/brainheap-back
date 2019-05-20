@@ -2,3 +2,5 @@ spring:
   data:
     mongodb:
       password:
+  security:
+    oauth2

@@ -11,6 +11,10 @@ object ItemProcessor {
         return Item(itemView.title, itemView.description, time, time, userId)
     }
 
+    fun extract(item: Item): ItemView {
+        return ItemView(item.title, item.description)
+    }
+
     fun update(dst: Item, src: ItemView, userId: String): Item {
         return Item(src.title, src.description, dst.created, getCurrentUTCTime(), userId, dst.id)
     }
