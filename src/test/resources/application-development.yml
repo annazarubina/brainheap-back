@@ -3,4 +3,9 @@ spring:
     mongodb:
       password:
   security:
-    oauth2
+    oauth2:
+      client:
+        registration:
+          facebook:
+            clientId: "testId"
+            clientSecret: "testSecret"

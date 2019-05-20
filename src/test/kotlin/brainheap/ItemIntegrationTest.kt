@@ -15,6 +15,7 @@ import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
+import org.springframework.boot.autoconfigure.security.oauth2.client.servlet.OAuth2ClientAutoConfiguration
 import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.client.TestRestTemplate
@@ -36,6 +37,7 @@ import java.util.*
 @EnableAutoConfiguration(exclude = [SecurityAutoConfiguration::class,
     AuthorizationServerConfiguration::class,
     ClientResourcesConfiguration::class,
+    OAuth2ClientAutoConfiguration::class,
     WebSecurityConfiguration::class])
 internal class ItemIntegrationTest(@Autowired val restTemplate: TestRestTemplate,
                                    @Autowired val itemRepository: ItemRepository, @Autowired val userRepository: UserRepository) {

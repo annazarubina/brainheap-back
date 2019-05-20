@@ -9,11 +9,13 @@ import brainheap.oauth.config.WebSecurityConfiguration
 import brainheap.user.model.User
 import brainheap.user.repo.UserRepository
 import brainheap.user.rest.view.UserView
+import com.ulisesbocchio.jasyptspringboot.JasyptSpringBootAutoConfiguration
 import org.junit.jupiter.api.*
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
+import org.springframework.boot.autoconfigure.security.oauth2.client.servlet.OAuth2ClientAutoConfiguration
 import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.client.TestRestTemplate
@@ -29,9 +31,11 @@ import org.springframework.web.client.RestClientException
 @ActiveProfiles("development")
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 //TODO(innulic) exclude oauth from integration test until it will not be ready to merge to master
-@EnableAutoConfiguration(exclude = [SecurityAutoConfiguration::class,
+@EnableAutoConfiguration(exclude = [JasyptSpringBootAutoConfiguration::class,
+    SecurityAutoConfiguration::class,
     AuthorizationServerConfiguration::class,
     ClientResourcesConfiguration::class,
+    OAuth2ClientAutoConfiguration::class,
     WebSecurityConfiguration::class])
 internal class UserIntegrationTest(@Autowired val restTemplate: TestRestTemplate,
                                    @Autowired val userRepository: UserRepository,
