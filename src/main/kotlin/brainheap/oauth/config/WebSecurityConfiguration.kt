@@ -1,7 +1,6 @@
 package brainheap.oauth.config
 
 import brainheap.oauth.extention.configure
-import brainheap.oauth.handler.RefererRedirectionAuthenticationSuccessHandle
 import brainheap.oauth.security.OAuth2PrincipalExtractor
 import brainheap.oauth.security.OAuth2SsoAuthenticationSuccessHandler
 import brainheap.oauth.service.UserService
@@ -44,12 +43,7 @@ class WebSecurityConfiguration(@Qualifier("oauth2ClientContext") private val oau
                 .httpBasic().disable()
                 .oauth2Login().redirectionEndpoint().baseUri("/oauth2/callback/*")
 
-                http.addFilterBefore(ssoFilter(), BasicAuthenticationFilter::class.java)
-    }
-
-    @Bean
-    fun refererAuthenticationSuccessHandler(): RefererRedirectionAuthenticationSuccessHandle {
-        return RefererRedirectionAuthenticationSuccessHandle()
+        http.addFilterBefore(ssoFilter(), BasicAuthenticationFilter::class.java)
     }
 
     @Bean
