@@ -7,41 +7,18 @@ spring:
             authorizationUri: https://www.facebook.com/v3.0/dialog/oauth
             tokenUri: https://graph.facebook.com/v3.0/oauth/access_token
             userInfoUri: https://graph.facebook.com/v3.0/me?fields=id,first_name,middle_name,last_name,name,email,verified,is_verified,picture.width(250).height(250)
-          google:
-            authorizationUri: https://accounts.google.com/o/oauth2/v2/auth
-            tokenUri: https://www.googleapis.com/oauth2/v4/token
-            userInfoUri: https://www.googleapis.com/oauth2/v3/userinfo
-          github:
-            authorizationUri: https://github.com/login/oauth/authorize
-            tokenUri: https://github.com/login/oauth/access_token
-            userInfoUri: https://api.github.com/user
         registration:
           facebook:
             provider: facebook
-            clientId: 840988416285901
-            clientSecret: ENC(A7sRSWp8vgNCTzb21/TEmgJIXOVgYHRwGqDF4Nh5wT+EiNjSl0sm+n3yRb9AlAOm)
+            clientId: 418386422290943
+            clientSecret: ENC(7ganZ1+hR6CKwUIIWvGYBlZ0/HYm6m39o/E6gaImWWv8Wwu998zkrBHj7fScISTO)
             redirectUriTemplate: "{baseUrl}/oauth2/callback/{registrationId}"
             scope:
               - email
               - public_profile
-          google:
-            provider: google
-            clientId: 381353400391-k7on3bq568khh3apg0r527udtbc4jsgd.apps.googleusercontent.com
-            clientSecret: ENC(ACggnHOAW+msWKEA5mwfm4wcTDTkJnkdv5ZktIAjdaNbzzeA4bU5eQ==)
-            redirectUriTemplate: "{baseUrl}/oauth2/callback/{registrationId}"
-            scope:
-              - https://www.googleapis.com/auth/userinfo.email
-              - https://www.googleapis.com/auth/userinfo.profile
-          github:
-            provider: github
-            clientId: 1cb853d37e5a7f05f936
-            clientSecret: ENC(E++AtykMjX6X1wkZBsra4hUnKL1B8wmhcfxyuNY46cNKh9okLpXiuHvPpOUGZRby5nOMWrDu5pI=)
-            redirectUriTemplate: "{baseUrl}/oauth2/callback/{registrationId}"
-            scope:
-              - user
   data:
     mongodb:
-      password: ENC(C3MW7kyfvPSGSDCTI2ku1g/aIrsUY3q+R1yptesm+7DoVMxT1mh+jQ==)
+      password: ENC(q/TDOZyld5nCEWyJooc2sXCQ002MAmN4)
   main:
     banner-mode: 'off'
 translator:
