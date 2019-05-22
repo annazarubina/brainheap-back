@@ -25,7 +25,7 @@ class UserController(private val repository: UserRepository, private val itemRep
     @PostMapping("/users")
     fun create(@Valid @RequestBody userView: UserView): ResponseEntity<User> {
         require(repository.findByEmail(userView.email).isEmpty()) { "User with this email (${userView.email}) already exists" }
-        return ResponseEntity(repository.insert(UserProcessor.convert(userView)), HttpStatus.CREATED)
+        return ResponseEntity(repository.save(UserProcessor.convert(userView)), HttpStatus.CREATED)
     }
 
     @PutMapping("/users/{id}")
