@@ -14,11 +14,11 @@ import javax.validation.Valid
 class UserController(private val repository: UserRepository, private val itemRepository: ItemRepository) {
 
     @GetMapping("/users")
-    fun filter(@RequestParam(required = false) email: String?): ResponseEntity<User> {
+    fun filter(@RequestParam(required = false) email: String?): ResponseEntity<List<User>> {
         val list = email?.let { repository.findByEmail(email) } ?: repository.findAll()
         return list
                 .takeIf { it.isNotEmpty() }
-                ?.let { ResponseEntity(it[0], HttpStatus.OK) }
+                ?.let { ResponseEntity(it, HttpStatus.OK) }
                 ?: ResponseEntity(HttpStatus.NOT_FOUND)
     }
 
