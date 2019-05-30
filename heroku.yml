@@ -1,3 +1,5 @@
 build:
   docker:
     web: Dockerfile
+run:
+  web: java -Dserver.port=$PORT -jar brainheap-back-master-1.0.0-SNAPSHOT.jar
