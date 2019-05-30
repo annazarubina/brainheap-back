@@ -7,7 +7,6 @@ RUN apt-get update -y && \
 RUN wget https://github.com/annazarubina/brainheap-back/archive/master.zip && unzip master.zip
 WORKDIR /brainheap-back-master/
 RUN ./gradlew build -x test
-RUN ls /brainheap-back-master/build/libs
 
 FROM openjdk:8-alpine
 EXPOSE 8080
