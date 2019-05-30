@@ -14,7 +14,6 @@ COPY --from=builder /brainheap-back-master/build/libs /
 CMD [ "java" \
     , "-jar" \
     , "brainheap-back-master-1.0.0-SNAPSHOT.jar" \
-    , "--logging.config=/logback.xml" \
     , "-Dspring.data.mongodb.database=heroku_dl043bxr" \
     , "-Dspring.data.mongodb.host=ds263109.mlab.com" \
     , "-Dspring.data.mongodb.port=63109" \
