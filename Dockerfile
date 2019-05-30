@@ -16,6 +16,7 @@ ENV spring.data.mongodb.port 63109
 ENV spring.data.mongodb.username heroku_dl043bxr
 ENV jasypt.encryptor.password brain-heap-innulic
 ENV java.security.egd file:/dev/./urandom
+ENV JAVA_TOOL_OPTIONS '-Xmx300m -Xss512k -XX:CICompilerCount=2'
 COPY --from=builder /brainheap-back-master/build/libs /
 CMD [ "java" \
     , "-jar" \
