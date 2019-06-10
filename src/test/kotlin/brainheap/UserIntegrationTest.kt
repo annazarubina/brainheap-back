@@ -31,15 +31,15 @@ internal class UserIntegrationTest(@Autowired val restTemplate: TestRestTemplate
     private var firstUser: User? = null
     private var secondUser: User? = null
 
-    @BeforeAll
-    fun setUpAll() {
+    @BeforeEach
+    fun setUp() {
         firstUser = userRepository.insert(User("first user", "first.user@test.test"))
         secondUser = userRepository.insert(User("second user", "second.user@test.test"))
         itemRepository.insert(Item("word1", "description 1", getCurrentUTCTime(), getCurrentUTCTime(), firstUser!!.id))
     }
 
-    @AfterAll
-    fun tearDownAll() {
+    @AfterEach
+    fun tearDown() {
         userRepository.deleteAll()
         itemRepository.deleteAll()
     }
