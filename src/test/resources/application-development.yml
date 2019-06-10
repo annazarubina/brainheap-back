@@ -2,3 +2,11 @@ spring:
   data:
     mongodb:
       password:
+translator:
+  type: ibm
+  ibm:
+    rest:
+      apikey:
+  google:
+    rest:
+      credentials_json:
