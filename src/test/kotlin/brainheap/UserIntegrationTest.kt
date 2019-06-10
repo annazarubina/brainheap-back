@@ -18,6 +18,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.springframework.web.client.RestClientException
+import java.util.ArrayList
 
 @ExtendWith(SpringExtension::class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -83,9 +84,9 @@ internal class UserIntegrationTest(@Autowired val restTemplate: TestRestTemplate
     @Test
     fun filter() {
         //when
-        val user = restTemplate.getForEntity("/users", User::class.java, firstUser?.email)
+        val user = restTemplate.getForEntity("/users", List::class.java)
         //than
         assertEquals(HttpStatus.OK, user.statusCode)
-        assertEquals(firstUser, user.body)
+        assertEquals(user.body?.size, 2)
     }
 }
