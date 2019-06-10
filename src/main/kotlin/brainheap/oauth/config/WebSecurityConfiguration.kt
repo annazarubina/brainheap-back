@@ -41,6 +41,7 @@ class WebSecurityConfiguration(@Qualifier("oauth2ClientContext") private val oau
                 .anyRequest().authenticated()
                 .and().formLogin().disable()
                 .httpBasic().disable()
+                .csrf().disable()
                 .oauth2Login().redirectionEndpoint().baseUri("/oauth2/callback/*")
 
         http.addFilterBefore(ssoFilter(), BasicAuthenticationFilter::class.java)
