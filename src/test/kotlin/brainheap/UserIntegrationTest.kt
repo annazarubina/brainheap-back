@@ -12,6 +12,7 @@ import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.client.TestRestTemplate
+import org.springframework.core.ParameterizedTypeReference
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpMethod
 import org.springframework.http.HttpStatus
@@ -82,11 +83,13 @@ internal class UserIntegrationTest(@Autowired val restTemplate: TestRestTemplate
 
 
     @Test
-    fun filter() {
+    fun filterByEmail() {
         //when
-        val user = restTemplate.getForEntity("/users", List::class.java)
+        val users = restTemplate.exchange("/users?email=\"${firstUser?.email}\"", HttpMethod.GET, HttpEntity.EMPTY,
+                object : ParameterizedTypeReference<List<User>>() {})
         //than
-        assertEquals(HttpStatus.OK, user.statusCode)
-        assertEquals(user.body?.size, 2)
+        assertEquals(HttpStatus.OK, users.statusCode)
+        assertEquals(users.body?.size, 1)
+        assertEquals(users.body?.first()?.email, firstUser?.email)
     }
 }
