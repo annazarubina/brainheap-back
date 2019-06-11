@@ -1,4 +1,4 @@
-package brainheap.translation.service.client
+package brainheap.translation.service.ibm.client
 
 import brainheap.translation.service.client.model.Data
 import brainheap.translation.service.client.model.Translations

@@ -9,9 +9,15 @@ import brainheap.oauth.config.ClientResourcesConfiguration
 import brainheap.oauth.config.WebSecurityConfiguration
 import brainheap.user.model.User
 import brainheap.user.repo.UserRepository
-import org.junit.jupiter.api.*
+import org.junit.jupiter.api.AfterAll
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
+import org.junit.jupiter.api.BeforeAll
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.TestInstance
+import org.junit.jupiter.api.assertAll
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
@@ -19,6 +25,7 @@ import org.springframework.boot.autoconfigure.security.oauth2.client.servlet.OAu
 import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.client.TestRestTemplate
+import org.springframework.core.ParameterizedTypeReference
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpMethod
@@ -30,7 +37,7 @@ import java.util.*
 
 
 @ExtendWith(SpringExtension::class)
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT )
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("development")
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 //TODO(innulic) exclude oauth from integration test until it will not be ready to merge to master
@@ -61,13 +68,43 @@ internal class ItemIntegrationTest(@Autowired val restTemplate: TestRestTemplate
     }
 
     @Test
-    fun filter() {
+    fun filterGetAll() {
         //when
-        val items = restTemplate.getForEntity("/items", List::class.java)
+        val items = restTemplate.exchange("/items", HttpMethod.GET, null, object : ParameterizedTypeReference<List<Item>>() {})
+        //than
+        assertAll("Check results",
+                { assertNotNull(items) },
+                { assertEquals(HttpStatus.OK, items.statusCode) },
+                { assertEquals(4, items.body?.size) }
+        )
+    }
+
+    @Test
+    fun filterByUser() {
+        //when
+        val headers = HttpHeaders()
+        headers.set("Authorization", firstUserId!!)
+        val items = restTemplate.exchange("/items", HttpMethod.GET, HttpEntity(null, headers), object : ParameterizedTypeReference<List<Item>>() {})
+        //than
+        assertAll("Check results",
+                { assertNotNull(items) },
+                { assertEquals(HttpStatus.OK, items.statusCode) },
+                { assertEquals(2, items.body?.size) }
+        )
+    }
+
+    @Test
+    fun filterByTitle() {
+        //when
+        val headers = HttpHeaders()
+        headers.set("Authorization", firstUserId!!)
+
+        val items = restTemplate.exchange("/items?query=\"title == \"word1\"\"", HttpMethod.GET, HttpEntity(null, headers),
+                object : ParameterizedTypeReference<List<Item>>() {})
         //than
         assertNotNull(items)
         assertEquals(HttpStatus.OK, items.statusCode)
-        assertEquals(4, items.body?.size)
+        assertEquals(1, items.body?.size)
     }
 
     @Test

@@ -2,8 +2,10 @@ package integration.test
 
 
 import brainheap.translation.service.TranslationService
-import brainheap.translation.service.client.IbmTranslatorProperties
-import brainheap.translation.service.client.IbmTranslatorService
+import brainheap.translation.service.google.GoogleTranslationService
+import brainheap.translation.service.ibm.IbmTranslationService
+import brainheap.translation.service.ibm.client.IbmTranslatorProperties
+import brainheap.translation.service.ibm.client.IbmTranslatorService
 import com.ulisesbocchio.jasyptspringboot.annotation.EnableEncryptableProperties
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Disabled
@@ -17,15 +19,15 @@ import org.springframework.context.annotation.Bean
 import org.springframework.test.context.junit.jupiter.SpringExtension
 
 @ExtendWith(SpringExtension::class)
-@SpringBootTest(classes = [TranslationServiceTestConfig::class])
-internal class TranslationServiceTest {
+@SpringBootTest(classes = [IbmTranslationServiceTestConfig::class])
+@Disabled("Extract this test to a separate suite and create a apikey for it")
+internal class IbmTranslationServiceTest {
     @Autowired
-    lateinit var translatorService: TranslationService
+    lateinit var translationService: TranslationService
 
     @Test
-    @Disabled("Extract this test to a separate suite and create a apikey for it")
-    fun translate() {
-        val res = translatorService.translate("Hello!")
+    fun translateIbm() {
+        val res = translationService.translate("Hello!")
         Assertions.assertEquals(res, "Здравствуйте!")
     }
 }
@@ -33,15 +35,14 @@ internal class TranslationServiceTest {
 @SpringBootConfiguration
 @EnableConfigurationProperties(value = [IbmTranslatorProperties::class])
 @EnableEncryptableProperties
-internal class TranslationServiceTestConfig {
-
+internal class IbmTranslationServiceTestConfig {
     @Bean
     fun ibmTranslatorService(properties: IbmTranslatorProperties): IbmTranslatorService {
         return IbmTranslatorService(properties)
     }
 
     @Bean
-    fun translatorService(service: IbmTranslatorService): TranslationService {
-        return TranslationService(service)
+    fun translationService(service: IbmTranslatorService): TranslationService {
+        return IbmTranslationService(service)
     }
 }

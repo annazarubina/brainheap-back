@@ -23,10 +23,12 @@ class ItemService(private val template: MongoTemplate) {
         return template.find(query)
     }
 
-    fun getAll(): List<Item>? = filter()
+    fun filter(userId: String?): List<Item>? = filter(userId, null, null, null, null)
+
+    fun getAll(): List<Item>? = filter(null)
 
     fun save(entity: Item): Item =
-            filter(entity.userId, limit=1)
+            filter(entity.userId, null, null, null, 1)
                     ?.firstOrNull()
                     ?.takeIf { item -> ItemProcessor.extract(item) == ItemProcessor.extract(entity) }
                     ?: template.save(entity)

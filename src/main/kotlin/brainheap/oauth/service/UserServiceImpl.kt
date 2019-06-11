@@ -13,11 +13,11 @@ import org.springframework.transaction.annotation.Transactional
 class UserServiceImpl(private val userRepository: UserRepository) : UserService {
 
     @Throws(UsernameNotFoundException::class)
-    override fun loadUserByUsername(username: String): UserDetails {
-        val account = userRepository.findByName(username)
-                ?: throw UsernameNotFoundException("Could not find account with username $username!")
+    override fun loadUserByUsername(userId: String): UserDetails {
+        val account = userRepository.findById(userId).orElse(null)
+                ?: throw UsernameNotFoundException("Could not find account with user id $userId!")
         return with(account) {
-            User.withUsername(username)
+            User.withUsername(userId)
                     .password(password)
                     .authorities("USER")
                     .build()
@@ -27,10 +27,10 @@ class UserServiceImpl(private val userRepository: UserRepository) : UserService 
     override fun saveOAuth2Account(oAuth2Authentication: OAuth2Authentication): brainheap.user.model.User {
         val userAuthentication = oAuth2Authentication.userAuthentication
         val details = userAuthentication.details as Map<*, *>
-        val username = userAuthentication.principal as String
+        val userId = userAuthentication.principal as String
 
-        return userRepository.findByName(username)
-                ?: userRepository.save(createAccount(username, details))
+        return userRepository.findById(userId).orElse(null)
+                ?: userRepository.save(createAccount(userId, details))
     }
 
     private fun createAccount(username: String, details: Map<*, *>):  brainheap.user.model.User {

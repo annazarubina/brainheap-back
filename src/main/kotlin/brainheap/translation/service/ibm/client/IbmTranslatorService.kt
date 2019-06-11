@@ -1,4 +1,4 @@
-package brainheap.translation.service.client
+package brainheap.translation.service.ibm.client
 
 import feign.Feign
 import feign.auth.BasicAuthRequestInterceptor
