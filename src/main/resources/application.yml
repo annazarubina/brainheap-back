@@ -11,7 +11,7 @@ spring:
           facebook:
             provider: facebook
             clientId: 840988416285901
-            clientSecret: ENC(gEivxU5RDLsr4s32g4jinr3yINFL4r1OFmysYjJrU5m5nPb5uz83ASNEIOgcIEwT)
+            clientSecret: ENC(A7sRSWp8vgNCTzb21/TEmgJIXOVgYHRwGqDF4Nh5wT+EiNjSl0sm+n3yRb9AlAOm)
             redirectUriTemplate: "{baseUrl}/oauth2/callback/{registrationId}"
             scope:
               - email
