@@ -13,6 +13,7 @@ import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter
+import org.springframework.security.config.http.SessionCreationPolicy
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.oauth2.client.OAuth2ClientContext
 import org.springframework.security.oauth2.client.OAuth2RestTemplate
@@ -45,6 +46,7 @@ class WebSecurityConfiguration(@Qualifier("oauth2ClientContext") private val oau
                 .oauth2Login().redirectionEndpoint().baseUri("/oauth2/callback/*")
 
         http.addFilterBefore(ssoFilter(), BasicAuthenticationFilter::class.java)
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
     }
 
     @Bean
