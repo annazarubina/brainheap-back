@@ -20,6 +20,7 @@ import org.springframework.security.oauth2.client.OAuth2RestTemplate
 import org.springframework.security.oauth2.client.filter.OAuth2ClientAuthenticationProcessingFilter
 import org.springframework.security.oauth2.client.filter.OAuth2ClientContextFilter
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableOAuth2Client
+import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter
 import org.springframework.web.context.request.RequestContextListener
 import org.springframework.web.filter.CompositeFilter
@@ -36,17 +37,13 @@ class WebSecurityConfiguration(@Qualifier("oauth2ClientContext") private val oau
     }
 
     override fun configure(http: HttpSecurity) = configure(http) {
-
-        antMatcher("/**")
+        http.addFilterBefore(ssoFilter(), BasicAuthenticationFilter::class.java)
                 .authorizeRequests().antMatchers("/", "/login**", "/assets/**").permitAll()
                 .anyRequest().authenticated()
-                .and().formLogin().disable()
-                .httpBasic().disable()
+                .and().formLogin().successHandler(SavedRequestAwareAuthenticationSuccessHandler())
+                .and().httpBasic().disable()
                 .csrf().disable()
                 .oauth2Login().redirectionEndpoint().baseUri("/oauth2/callback/*")
-
-        http.addFilterBefore(ssoFilter(), BasicAuthenticationFilter::class.java)
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
     }
 
     @Bean
