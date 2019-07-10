@@ -22,8 +22,8 @@ class CurrentUserController(private val currentUserDetector: CurrentUserDetector
 
     @GetMapping("/currentuser")
     @ResponseBody
-    fun getCurrentuser(authentication: Authentication): ResponseEntity<User> {
-        return currentUserDetector.currentUser(authentication.principal as DefaultOAuth2User)
+    fun getCurrentuser(authentication: Authentication): ResponseEntity<String> {
+        return currentUserDetector.currentUserEmail(authentication.principal as DefaultOAuth2User)
                 ?.let { ResponseEntity(it, HttpStatus.OK) }
                 ?: ResponseEntity(HttpStatus.NO_CONTENT)
     }
