@@ -37,6 +37,10 @@
             <span>Login with Facebook</span>
             <span class="material-icons">arrow_forward</span>
         </a>
+        <a class="login__link google" href="<@spring.url '/login/google'/>">
+            <span>Login with Google</span>
+            <span class="material-icons">arrow_forward</span>
+        </a>
     </div>
 </main>
 </body>
