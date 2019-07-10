@@ -2,6 +2,7 @@ package brainheap.oauth.service
 
 import org.springframework.security.core.userdetails.User
 import brainheap.user.repo.UserRepository
+import org.springframework.security.core.Authentication
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.security.oauth2.provider.OAuth2Authentication
@@ -24,10 +25,9 @@ class UserServiceImpl(private val userRepository: UserRepository) : UserService 
         }
     }
 
-    override fun saveOAuth2Account(oAuth2Authentication: OAuth2Authentication): brainheap.user.model.User {
-        val userAuthentication = oAuth2Authentication.userAuthentication
-        val details = userAuthentication.details as Map<*, *>
-        val userId = userAuthentication.principal as String
+    override fun saveOAuth2Account(authentication: Authentication): brainheap.user.model.User {
+        val details = authentication.details as Map<*, *>
+        val userId = authentication.principal as String
 
         return userRepository.findById(userId).orElse(null)
                 ?: userRepository.save(createAccount(userId, details))
