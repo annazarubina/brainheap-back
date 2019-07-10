@@ -11,6 +11,10 @@ spring:
             authorizationUri: https://accounts.google.com/o/oauth2/v2/auth
             tokenUri: https://www.googleapis.com/oauth2/v4/token
             userInfoUri: https://www.googleapis.com/oauth2/v3/userinfo
+          github:
+            authorizationUri: https://github.com/login/oauth/authorize
+            tokenUri: https://github.com/login/oauth/access_token
+            userInfoUri: https://api.github.com/user
         registration:
           facebook:
             provider: facebook
@@ -28,6 +32,13 @@ spring:
             scope:
               - https://www.googleapis.com/auth/userinfo.email
               - https://www.googleapis.com/auth/userinfo.profile
+          github:
+            provider: github
+            clientId: 1cb853d37e5a7f05f936
+            clientSecret: ENC(E++AtykMjX6X1wkZBsra4hUnKL1B8wmhcfxyuNY46cNKh9okLpXiuHvPpOUGZRby5nOMWrDu5pI=)
+            redirectUriTemplate: "{baseUrl}/oauth2/callback/{registrationId}"
+            scope:
+              - user
   data:
     mongodb:
       password: ENC(C3MW7kyfvPSGSDCTI2ku1g/aIrsUY3q+R1yptesm+7DoVMxT1mh+jQ==)

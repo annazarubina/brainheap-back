@@ -41,6 +41,10 @@
             <span>Login with Google</span>
             <span class="material-icons">arrow_forward</span>
         </a>
+        <a class="login__link github" href="<@spring.url '/login/github'/>">
+            <span>Login with Github</span>
+            <span class="material-icons">arrow_forward</span>
+        </a>
     </div>
 </main>
 </body>
