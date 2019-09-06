@@ -64,7 +64,7 @@ internal class UserIntegrationTest(@Autowired val restTemplate: TestRestTemplate
         //given
         val sizeBefore = userRepository.findAll().size
         //when
-        val deleted = restTemplate.exchange(USER_BASE_PATH + "${secondUser?.id}", HttpMethod.DELETE, HttpEntity.EMPTY, User::class.java)
+        val deleted = restTemplate.exchange(USER_BASE_PATH + "/${secondUser?.id}", HttpMethod.DELETE, HttpEntity.EMPTY, User::class.java)
         //than
         val sizeAfter = userRepository.findAll().size
         assertEquals(sizeBefore - 1, sizeAfter)
