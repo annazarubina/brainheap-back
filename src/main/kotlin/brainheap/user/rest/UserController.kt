@@ -1,7 +1,7 @@
 package brainheap.user.rest
 
+import brainheap.common.exceptions.DataAlreadyExistException
 import brainheap.common.tools.removeQuotes
-import brainheap.common.tools.removeQuotesAndTrimWhitespaces
 import brainheap.item.repo.ItemRepository
 import brainheap.user.model.User
 import brainheap.user.model.processors.UserProcessor
@@ -17,7 +17,7 @@ class UserController(private val repository: UserRepository, private val itemRep
 
     @GetMapping("/users")
     fun filter(@RequestParam(required = false) email: String?): ResponseEntity<List<User>> {
-        val list = email?.let{removeQuotes(it)}?.let { repository.findByEmail(it) } ?: repository.findAll()
+        val list = email?.let { removeQuotes(it) }?.let { repository.findByEmail(it) } ?: repository.findAll()
         return list
                 .takeIf { it.isNotEmpty() }
                 ?.let { ResponseEntity(it, HttpStatus.OK) }
@@ -26,7 +26,9 @@ class UserController(private val repository: UserRepository, private val itemRep
 
     @PostMapping("/users")
     fun create(@Valid @RequestBody userView: UserView): ResponseEntity<User> {
-        require(repository.findByEmail(userView.email).isEmpty()) { "User with this email (${userView.email}) already exists" }
+        if (repository.findByEmail(userView.email).isNotEmpty()) {
+            throw DataAlreadyExistException("User with this email (${userView.email}) already exists")
+        }
         return ResponseEntity(repository.save(UserProcessor.convert(userView)), HttpStatus.CREATED)
     }
 
