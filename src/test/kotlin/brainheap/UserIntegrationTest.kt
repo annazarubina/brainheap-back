@@ -101,7 +101,7 @@ internal class UserIntegrationTest(@Autowired val restTemplate: TestRestTemplate
     @Test
     fun addTheSameUser() {
         //given
-        val alreadyExcisedItem = UserView("first user", "first.user@test.test")
+        val alreadyExistedItem = UserView("first user", "first.user@test.test")
         //when
         val response = restTemplate.postForEntity(USER_BASE_PATH, HttpEntity(alreadyExcisedItem), ErrorInfo::class.java)
         //then
