@@ -1,23 +1,21 @@
 package brainheap.item.rest
 
+import brainheap.common.rest.error.ErrorCreator
 import brainheap.item.repo.ItemRepository
 import brainheap.item.repo.ItemService
 import brainheap.user.repo.UserRepository
+import com.fasterxml.jackson.databind.ObjectMapper
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
+import org.springframework.boot.test.mock.mockito.MockBean
+import org.springframework.http.MediaType
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
-import org.springframework.boot.test.mock.mockito.MockBean
-import org.springframework.http.MediaType
-import com.fasterxml.jackson.databind.ObjectMapper
-import org.assertj.core.api.Assertions.assertThat
-import org.springframework.test.web.servlet.ResultActions
-import org.springframework.test.web.servlet.MvcResult
-import org.springframework.test.web.servlet.result.MockMvcResultHandlers
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
 
 @ExtendWith(SpringExtension::class)
@@ -38,6 +36,9 @@ class ItemControllerTest {
 
     @MockBean
     private val service: ItemService? = null
+
+    @MockBean
+    private val errorCreator: ErrorCreator? = null
 
     private val badRequestMessage = "JSON parse error: Instantiation of [simple type, class brainheap.item.rest.view.ItemView] value failed for JSON property title due to missing (therefore NULL) value for creator parameter title which is a non-nullable type; nested exception is com.fasterxml.jackson.module.kotlin.MissingKotlinParameterException: Instantiation of [simple type, class brainheap.item.rest.view.ItemView] value failed for JSON property title due to missing (therefore NULL) value for creator parameter title which is a non-nullable type\n at [Source: (PushbackInputStream); line: 1, column: 3] (through reference chain: java.util.ArrayList[0]->brainheap.item.rest.view.ItemView[\"title\"])"
 
