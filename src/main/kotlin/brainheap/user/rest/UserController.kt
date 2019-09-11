@@ -1,6 +1,5 @@
 package brainheap.user.rest
 
-import brainheap.common.exceptions.DataAlreadyExistException
 import brainheap.common.tools.removeQuotes
 import brainheap.item.repo.ItemRepository
 import brainheap.user.model.User
@@ -25,12 +24,8 @@ class UserController(private val repository: UserRepository, private val itemRep
     }
 
     @PostMapping("/users")
-    fun create(@Valid @RequestBody userView: UserView): ResponseEntity<User> {
-        if (repository.findByEmail(userView.email).isNotEmpty()) {
-            throw DataAlreadyExistException("User with this email (${userView.email}) already exists")
-        }
-        return ResponseEntity(repository.save(UserProcessor.convert(userView)), HttpStatus.CREATED)
-    }
+    fun create(@Valid @RequestBody userView: UserView): ResponseEntity<User> =
+        ResponseEntity(repository.save(UserProcessor.convert(userView)), HttpStatus.CREATED)
 
     @PutMapping("/users/{id}")
     fun update(@PathVariable id: String, @Valid @RequestBody userView: UserView): ResponseEntity<User> =

@@ -1,5 +1,6 @@
 package brainheap
 
+import brainheap.common.rest.error.model.ErrorInfo
 import brainheap.common.tools.getCurrentUTCTime
 import brainheap.item.model.Item
 import brainheap.item.repo.ItemRepository
@@ -8,6 +9,7 @@ import brainheap.user.repo.UserRepository
 import brainheap.user.rest.view.UserView
 import org.junit.jupiter.api.*
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
@@ -54,7 +56,7 @@ internal class UserIntegrationTest(@Autowired val restTemplate: TestRestTemplate
         val newUser = UserView("third user", "third.user@test.test")
         //when
         val created = restTemplate.postForEntity(USER_BASE_PATH, HttpEntity(newUser), UserView::class.java)
-        //than
+        //then
         assertEquals(HttpStatus.CREATED, created.statusCode)
         assertEquals(newUser, created.body)
     }
@@ -65,7 +67,7 @@ internal class UserIntegrationTest(@Autowired val restTemplate: TestRestTemplate
         val sizeBefore = userRepository.findAll().size
         //when
         val deleted = restTemplate.exchange(USER_BASE_PATH + "/${secondUser?.id}", HttpMethod.DELETE, HttpEntity.EMPTY, User::class.java)
-        //than
+        //then
         val sizeAfter = userRepository.findAll().size
         assertEquals(sizeBefore - 1, sizeAfter)
         assertEquals(secondUser, deleted.body)
@@ -79,7 +81,7 @@ internal class UserIntegrationTest(@Autowired val restTemplate: TestRestTemplate
         assertThrows<RestClientException> {
             restTemplate.exchange(USER_BASE_PATH + "${firstUser?.id}", HttpMethod.DELETE, HttpEntity.EMPTY, User::class.java)
         }
-        //than
+        //then
         val sizeAfter = userRepository.findAll().size
         assertEquals(sizeBefore, sizeAfter)
     }
@@ -90,7 +92,7 @@ internal class UserIntegrationTest(@Autowired val restTemplate: TestRestTemplate
         //when
         val users = restTemplate.exchange(USER_BASE_PATH + "?email=\"${firstUser?.email}\"", HttpMethod.GET, HttpEntity.EMPTY,
                 object : ParameterizedTypeReference<List<User>>() {})
-        //than
+        //then
         assertEquals(HttpStatus.OK, users.statusCode)
         assertEquals(users.body?.size, 1)
         assertEquals(users.body?.first()?.email, firstUser?.email)
@@ -101,9 +103,9 @@ internal class UserIntegrationTest(@Autowired val restTemplate: TestRestTemplate
         //given
         val alreadyExcisedItem = UserView("first user", "first.user@test.test")
         //when
-        val response = restTemplate.postForEntity(USER_BASE_PATH, HttpEntity(alreadyExcisedItem), UserView::class.java)
-        //than
-        Assertions.assertNotNull(response)
+        val response = restTemplate.postForEntity(USER_BASE_PATH, HttpEntity(alreadyExcisedItem), ErrorInfo::class.java)
+        //then
+        assertNotNull(response)
         assertEquals(HttpStatus.CONFLICT, response.statusCode)
     }
 
