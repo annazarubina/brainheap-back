@@ -103,7 +103,7 @@ internal class UserIntegrationTest(@Autowired val restTemplate: TestRestTemplate
         //given
         val alreadyExistedItem = UserView("first user", "first.user@test.test")
         //when
-        val response = restTemplate.postForEntity(USER_BASE_PATH, HttpEntity(alreadyExcisedItem), ErrorInfo::class.java)
+        val response = restTemplate.postForEntity(USER_BASE_PATH, HttpEntity(alreadyExistedItem), ErrorInfo::class.java)
         //then
         assertNotNull(response)
         assertEquals(HttpStatus.CONFLICT, response.statusCode)
