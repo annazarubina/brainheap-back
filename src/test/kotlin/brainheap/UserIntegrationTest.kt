@@ -1,5 +1,6 @@
 package brainheap
 
+import brainheap.common.rest.error.model.ErrorInfo
 import brainheap.common.tools.getCurrentUTCTime
 import brainheap.item.model.Item
 import brainheap.item.repo.ItemRepository
@@ -8,6 +9,7 @@ import brainheap.user.repo.UserRepository
 import brainheap.user.rest.view.UserView
 import org.junit.jupiter.api.*
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
@@ -19,7 +21,6 @@ import org.springframework.http.HttpStatus
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.springframework.web.client.RestClientException
-import java.util.ArrayList
 
 @ExtendWith(SpringExtension::class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -31,6 +32,10 @@ internal class UserIntegrationTest(@Autowired val restTemplate: TestRestTemplate
 
     private var firstUser: User? = null
     private var secondUser: User? = null
+
+    companion object {
+        const val USER_BASE_PATH = "/users"
+    }
 
     @BeforeEach
     fun setUp() {
@@ -50,8 +55,8 @@ internal class UserIntegrationTest(@Autowired val restTemplate: TestRestTemplate
         //given
         val newUser = UserView("third user", "third.user@test.test")
         //when
-        val created = restTemplate.postForEntity("/users", HttpEntity(newUser), UserView::class.java)
-        //than
+        val created = restTemplate.postForEntity(USER_BASE_PATH, HttpEntity(newUser), UserView::class.java)
+        //then
         assertEquals(HttpStatus.CREATED, created.statusCode)
         assertEquals(newUser, created.body)
     }
@@ -61,8 +66,8 @@ internal class UserIntegrationTest(@Autowired val restTemplate: TestRestTemplate
         //given
         val sizeBefore = userRepository.findAll().size
         //when
-        val deleted = restTemplate.exchange("/users/${secondUser?.id}", HttpMethod.DELETE, HttpEntity.EMPTY, User::class.java)
-        //than
+        val deleted = restTemplate.exchange(USER_BASE_PATH + "/${secondUser?.id}", HttpMethod.DELETE, HttpEntity.EMPTY, User::class.java)
+        //then
         val sizeAfter = userRepository.findAll().size
         assertEquals(sizeBefore - 1, sizeAfter)
         assertEquals(secondUser, deleted.body)
@@ -74,9 +79,9 @@ internal class UserIntegrationTest(@Autowired val restTemplate: TestRestTemplate
         val sizeBefore = userRepository.findAll().size
         //when
         assertThrows<RestClientException> {
-            restTemplate.exchange("/users/${firstUser?.id}", HttpMethod.DELETE, HttpEntity.EMPTY, User::class.java)
+            restTemplate.exchange(USER_BASE_PATH + "${firstUser?.id}", HttpMethod.DELETE, HttpEntity.EMPTY, User::class.java)
         }
-        //than
+        //then
         val sizeAfter = userRepository.findAll().size
         assertEquals(sizeBefore, sizeAfter)
     }
@@ -85,11 +90,24 @@ internal class UserIntegrationTest(@Autowired val restTemplate: TestRestTemplate
     @Test
     fun filterByEmail() {
         //when
-        val users = restTemplate.exchange("/users?email=\"${firstUser?.email}\"", HttpMethod.GET, HttpEntity.EMPTY,
+        val users = restTemplate.exchange(USER_BASE_PATH + "?email=\"${firstUser?.email}\"", HttpMethod.GET, HttpEntity.EMPTY,
                 object : ParameterizedTypeReference<List<User>>() {})
-        //than
+        //then
         assertEquals(HttpStatus.OK, users.statusCode)
         assertEquals(users.body?.size, 1)
         assertEquals(users.body?.first()?.email, firstUser?.email)
     }
+
+    @Test
+    fun addTheSameUser() {
+        //given
+        val alreadyExistedItem = UserView("first user", "first.user@test.test")
+        //when
+        val response = restTemplate.postForEntity(USER_BASE_PATH, HttpEntity(alreadyExistedItem), ErrorInfo::class.java)
+        //then
+        assertNotNull(response)
+        assertEquals(HttpStatus.CONFLICT, response.statusCode)
+    }
+
+
 }
