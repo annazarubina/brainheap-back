@@ -9,6 +9,15 @@ spring:
           facebook:
             clientId: "testId"
             clientSecret: "testSecret"
+          google:
+            provider: google
+            clientId: "testId"
+            clientSecret: "testSecret"
+          github:
+            provider: github
+            clientId: "testId"
+            clientSecret: "testSecret"
+
 translator:
   type: ibm
   ibm:
