@@ -26,8 +26,8 @@ spring:
               - public_profile
           google:
             provider: google
-            clientId: 381353400391-k7on3bq568khh3apg0r527udtbc4jsgd.apps.googleusercontent.com
-            clientSecret: ENC(ACggnHOAW+msWKEA5mwfm4wcTDTkJnkdv5ZktIAjdaNbzzeA4bU5eQ==)
+            clientId: 363146962017-gnikjoncckhhbmhet625tat6qc0rub2d.apps.googleusercontent.com
+            clientSecret: ENC(VcWCeB/bS9H3GBADau7BvfrQsFK+JUxmpNDyyqV8fCtcv88hRamLZA==)
             redirectUriTemplate: "{baseUrl}/oauth2/callback/{registrationId}"
             scope:
               - https://www.googleapis.com/auth/userinfo.email
