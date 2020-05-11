@@ -4,7 +4,6 @@ import brainheap.common.tools.getCurrentUTCTime
 import brainheap.item.model.Item
 import brainheap.item.repo.ItemRepository
 import brainheap.oauth.config.AuthorizationServerConfiguration
-import brainheap.oauth.config.ClientResourcesConfiguration
 import brainheap.oauth.config.WebSecurityConfiguration
 import brainheap.user.model.User
 import brainheap.user.repo.UserRepository
@@ -35,7 +34,6 @@ import org.springframework.web.client.RestClientException
 @EnableAutoConfiguration(exclude = [JasyptSpringBootAutoConfiguration::class,
     SecurityAutoConfiguration::class,
     AuthorizationServerConfiguration::class,
-    ClientResourcesConfiguration::class,
     OAuth2ClientAutoConfiguration::class,
     WebSecurityConfiguration::class])
 internal class UserIntegrationTest(@Autowired val restTemplate: TestRestTemplate,

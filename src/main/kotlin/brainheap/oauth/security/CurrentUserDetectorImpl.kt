@@ -24,10 +24,10 @@ class CurrentUserDetectorImpl(
         val userEmail = currentUserEmail(oAuth2User)
         require(userEmail != null ) { "User has no e-mail attribute" }
         require(userEmail.isNotEmpty()) { "User e-mail is empty" }
-        val users = userRepository.findByEmail(userEmail)
+        val user = userRepository.findByEmail(userEmail)
         //todo throw UserNotFoundException
         //todo add exception handler to received http error code
-        require(users.isNotEmpty()) { "User with this email ($userEmail) is not registered" }
-        return users[0]
+        requireNotNull(user) { "User with this email ($userEmail) is not registered" }
+        return user
     }
 }

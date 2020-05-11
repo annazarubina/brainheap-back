@@ -16,7 +16,7 @@ class UserController(private val repository: UserRepository, private val itemRep
 
     @GetMapping("/users")
     fun filter(@RequestParam(required = false) email: String?): ResponseEntity<List<User>> {
-        val list = email?.let { removeQuotes(it) }?.let { repository.findByEmail(it) } ?: repository.findAll()
+        val list = email?.let { removeQuotes(it) }?.let { listOfNotNull(repository.findByEmail(it)) } ?: repository.findAll()
         return list
                 .takeIf { it.isNotEmpty() }
                 ?.let { ResponseEntity(it, HttpStatus.OK) }
@@ -25,7 +25,7 @@ class UserController(private val repository: UserRepository, private val itemRep
 
     @PostMapping("/users")
     fun create(@Valid @RequestBody userView: UserView): ResponseEntity<User> {
-        require(repository.findByEmail(userView.email).isEmpty()) { "User with this email (${userView.email}) already exists" }
+        require(repository.findByEmail(userView.email) == null) { "User with this email (${userView.email}) already exists" }
         return ResponseEntity(repository.save(UserProcessor.convert(userView)), HttpStatus.CREATED)
     }
 

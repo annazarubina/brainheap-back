@@ -1,11 +1,9 @@
 package brainheap.oauth.config
 
 import brainheap.oauth.extention.configure
-import brainheap.oauth.security.OAuth2PrincipalExtractor
 import brainheap.oauth.security.OAuth2SsoAuthenticationSuccessHandler
 import brainheap.oauth.service.UserService
 import org.springframework.beans.factory.annotation.Qualifier
-import org.springframework.boot.autoconfigure.security.oauth2.resource.UserInfoTokenServices
 import org.springframework.boot.web.servlet.FilterRegistrationBean
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -15,19 +13,15 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.oauth2.client.OAuth2ClientContext
-import org.springframework.security.oauth2.client.OAuth2RestTemplate
-import org.springframework.security.oauth2.client.filter.OAuth2ClientAuthenticationProcessingFilter
 import org.springframework.security.oauth2.client.filter.OAuth2ClientContextFilter
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableOAuth2Client
-import org.springframework.security.web.authentication.www.BasicAuthenticationFilter
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler
 import org.springframework.web.context.request.RequestContextListener
-import org.springframework.web.filter.CompositeFilter
 
 
 @Configuration
 @EnableOAuth2Client
 class WebSecurityConfiguration(@Qualifier("oauth2ClientContext") private val oauth2ClientContext: OAuth2ClientContext,
-                               private val facebookConfig: FacebookConfig,
                                private val accountService: UserService) : WebSecurityConfigurerAdapter() {
 
     override fun configure(auth: AuthenticationManagerBuilder) = configure(auth) {
@@ -35,13 +29,18 @@ class WebSecurityConfiguration(@Qualifier("oauth2ClientContext") private val oau
     }
 
     override fun configure(http: HttpSecurity) = configure(http) {
-        http.addFilterBefore(ssoFilter(), BasicAuthenticationFilter::class.java)
-                .authorizeRequests().antMatchers("/", "/login**", "/assets/**").permitAll()
+        http.authorizeRequests().antMatchers("/", "/login**", "/assets/**").permitAll()
                 .anyRequest().authenticated()
                 .and().formLogin().disable()
                 .httpBasic().disable()
                 .csrf().disable()
                 .oauth2Login().redirectionEndpoint().baseUri("/oauth2/callback/*")
+                .and().successHandler(successHandler())
+    }
+
+    @Bean
+    fun successHandler(): AuthenticationSuccessHandler {
+        return OAuth2SsoAuthenticationSuccessHandler(accountService)
     }
 
     @Bean
@@ -61,20 +60,4 @@ class WebSecurityConfiguration(@Qualifier("oauth2ClientContext") private val oau
         return RequestContextListener()
     }
 
-    private fun ssoFilter() = CompositeFilter().apply {
-        val facebookFilter = facebookConfig.filter("/login/facebook") { userId -> "$userId@facebook.com" }
-
-        setFilters(listOf(facebookFilter))
-    }
-
-    private fun ClientResources.filter(path: String, usernameMapper: (String) -> String) = OAuth2ClientAuthenticationProcessingFilter(path).apply {
-        val template = OAuth2RestTemplate(this@filter.client, oauth2ClientContext)
-
-        setRestTemplate(template)
-        setTokenServices(UserInfoTokenServices(this@filter.resource.userInfoUri, this@filter.client.clientId).apply {
-            setRestTemplate(template)
-            setPrincipalExtractor(OAuth2PrincipalExtractor(usernameMapper))
-        })
-        setAuthenticationSuccessHandler(OAuth2SsoAuthenticationSuccessHandler(accountService))
-    }
 }

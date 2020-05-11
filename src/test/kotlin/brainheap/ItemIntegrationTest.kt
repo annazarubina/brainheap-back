@@ -5,7 +5,6 @@ import brainheap.item.model.Item
 import brainheap.item.repo.ItemRepository
 import brainheap.item.rest.view.ItemView
 import brainheap.oauth.config.AuthorizationServerConfiguration
-import brainheap.oauth.config.ClientResourcesConfiguration
 import brainheap.oauth.config.WebSecurityConfiguration
 import brainheap.user.model.User
 import brainheap.user.repo.UserRepository
@@ -36,7 +35,6 @@ import java.util.*
 //TODO(innulic) exclude oauth from integration test until it will not be ready to merge to master
 @EnableAutoConfiguration(exclude = [SecurityAutoConfiguration::class,
     AuthorizationServerConfiguration::class,
-    ClientResourcesConfiguration::class,
     OAuth2ClientAutoConfiguration::class,
     WebSecurityConfiguration::class])
 @Disabled("Temporally disabled until solution for oauth in test will not be found")

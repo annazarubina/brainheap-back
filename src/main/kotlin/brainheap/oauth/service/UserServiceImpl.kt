@@ -1,11 +1,10 @@
 package brainheap.oauth.service
 
-import org.springframework.security.core.userdetails.User
 import brainheap.user.repo.UserRepository
-import org.springframework.security.core.Authentication
+import org.springframework.security.core.userdetails.User
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.core.userdetails.UsernameNotFoundException
-import org.springframework.security.oauth2.provider.OAuth2Authentication
+import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
@@ -25,17 +24,17 @@ class UserServiceImpl(private val userRepository: UserRepository) : UserService 
         }
     }
 
-    override fun saveOAuth2Account(authentication: Authentication): brainheap.user.model.User {
-        val details = authentication.details as Map<*, *>
-        val userId = authentication.principal as String
+    override fun saveOAuth2Account(authentication: OAuth2AuthenticationToken): brainheap.user.model.User {
+        val details = authentication.principal.attributes as Map<*, *>
+        val email: String = details["email"] as String
 
-        return userRepository.findById(userId).orElse(null)
-                ?: userRepository.save(createAccount(userId, details))
+        return userRepository.findByEmail(email)
+                ?: userRepository.save(createAccount(email, details))
     }
 
-    private fun createAccount(username: String, details: Map<*, *>):  brainheap.user.model.User {
-        val email: String = details["email"] as String
-        return brainheap.user.model.User(name = username, email = email)
+    private fun createAccount(email: String, details: Map<*, *>):  brainheap.user.model.User {
+        val name: String = details["name"] as String
+        return brainheap.user.model.User(name = name, email = email)
     }
 
 }
