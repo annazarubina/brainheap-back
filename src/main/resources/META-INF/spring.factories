@@ -1,4 +1,0 @@
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-brainheap.oauth.config.AuthorizationServerConfiguration,\
-  brainheap.oauth.config.WebSecurityConfiguration,\
-  brainheap.oauth.config.ClientResourcesConfiguration
