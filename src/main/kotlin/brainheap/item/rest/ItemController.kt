@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
+import java.util.stream.Collectors
 import javax.validation.Valid
 
 
@@ -28,66 +29,71 @@ class ItemController(
             @RequestParam(required = false) query: String?,
             @RequestParam(required = false) sortBy: String?,
             @RequestParam(required = false) offset: Int?,
-            @RequestParam(required = false) limit: Int?): ResponseEntity<List<Item>> {
+            @RequestParam(required = false) limit: Int?): ResponseEntity<List<ItemView>> {
         val currentUserId = currentUserDetector.currentUserId(authentication)
         return service.filter(removeQuotes(currentUserId), removeQuotes(query), sortBy, offset, limit)
                 ?.takeIf { it.isNotEmpty() }
-                ?.let { ResponseEntity(it, HttpStatus.OK) } ?: ResponseEntity(HttpStatus.NO_CONTENT)
+                ?.let { ResponseEntity(convert(it), HttpStatus.OK) } ?: ResponseEntity(HttpStatus.NO_CONTENT)
+    }
+
+    private fun convert(it: List<Item>): List<ItemView> {
+        return it.stream().map{item -> ItemView(item.title, item.description) }.collect(Collectors.toList())
     }
 
     @PostMapping("/items")
     fun createAll(
             authentication: OAuth2AuthenticationToken,
-            @Valid @RequestBody itemViews: List<ItemView>): ResponseEntity<List<Item>> {
+            @Valid @RequestBody itemViews: List<ItemView>): ResponseEntity<List<ItemView>> {
         return itemViews
                 .map { ItemProcessor.convert(it, currentUserDetector.currentUserId(authentication)) }
                 .takeIf { it.isNotEmpty() }
                 ?.let { repository.saveAll(it) }
-                ?.let { ResponseEntity(it, HttpStatus.OK) }
+                ?.let { ResponseEntity(convert(it), HttpStatus.OK) }
                 ?: ResponseEntity(HttpStatus.NO_CONTENT)
     }
 
     @GetMapping("/items/{id}")
     fun get(
             authentication: OAuth2AuthenticationToken,
-            @PathVariable id: String): ResponseEntity<Item> {
+            @PathVariable id: String): ResponseEntity<ItemView> {
         return repository.findByUserIdAndId(currentUserDetector.currentUserId(authentication), id)
-                ?.let { ResponseEntity(it, HttpStatus.OK) }
+                ?.let { ResponseEntity(ItemView(it.title,it.description), HttpStatus.OK) }
                 ?: ResponseEntity(HttpStatus.NO_CONTENT)
     }
 
     @PostMapping("/items/new")
     fun create(
             authentication: OAuth2AuthenticationToken,
-            @Valid @RequestBody itemView: ItemView): ResponseEntity<Item> {
+            @Valid @RequestBody itemView: ItemView): ResponseEntity<ItemView> {
         val userId = currentUserDetector.currentUserId(authentication)
-        return ResponseEntity(repository.save(ItemProcessor.convert(itemView, userId)), HttpStatus.CREATED)
+        val item = repository.save(ItemProcessor.convert(itemView, userId))
+        return ResponseEntity(ItemView(item.title,item.description), HttpStatus.CREATED)
     }
 
     @PatchMapping("/items/{id}")
     fun update(
             authentication: OAuth2AuthenticationToken,
             @PathVariable id: String,
-            @Valid @RequestBody itemView: ItemView): ResponseEntity<Item> {
+            @Valid @RequestBody itemView: ItemView): ResponseEntity<ItemView> {
         val userId = currentUserDetector.currentUserId(authentication)
         return repository.findByUserIdAndId(userId, id)
                 ?.let { ItemProcessor.update(it, itemView, userId) }
                 ?.let { service.save(it) }
-                ?.let { ResponseEntity(it, HttpStatus.OK) }
+                ?.let { ResponseEntity(ItemView(it.title,it.description), HttpStatus.OK) }
                 ?: ResponseEntity(HttpStatus.NO_CONTENT)
     }
 
     @DeleteMapping("/items/{id}")
     fun delete(
             authentication: OAuth2AuthenticationToken,
-            @PathVariable id: String): ResponseEntity<Item> {
+            @PathVariable id: String): ResponseEntity<ItemView> {
         return repository.findByUserIdAndId(currentUserDetector.currentUserId(authentication), id)
                 ?.let { ResponseEntity(deleteItem(it), HttpStatus.OK) }
                 ?: ResponseEntity(HttpStatus.NO_CONTENT)
     }
 
     @DeleteMapping("/items")
-    fun deleteAll(authentication: OAuth2AuthenticationToken): ResponseEntity<List<Item>> {
+    fun deleteAll(authentication: OAuth2AuthenticationToken): ResponseEntity<List<ItemView>> {
         return repository.findByUserId(currentUserDetector.currentUserId(authentication))
                 ?.takeIf { it.isNotEmpty() }
                 ?.map { deleteItem(it) }
@@ -95,9 +101,10 @@ class ItemController(
                 ?: ResponseEntity(HttpStatus.NO_CONTENT)
     }
 
-    private fun deleteItem(item: Item): Item {
+    //TODO(innulic) refactor this method
+    private fun deleteItem(item: Item): ItemView {
         repository.deleteById(item.id)
-        return item
+        return ItemView(item.title,item.description)
     }
 
 }
