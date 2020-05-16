@@ -3,26 +3,42 @@ package brainheap.oauth.config
 import brainheap.oauth.extention.configure
 import brainheap.oauth.security.OAuth2SsoAuthenticationSuccessHandler
 import brainheap.oauth.service.UserService
-import org.springframework.beans.factory.annotation.Qualifier
-import org.springframework.boot.web.servlet.FilterRegistrationBean
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
-import org.springframework.security.oauth2.client.OAuth2ClientContext
-import org.springframework.security.oauth2.client.filter.OAuth2ClientContextFilter
-import org.springframework.security.oauth2.config.annotation.web.configuration.EnableOAuth2Client
+import org.springframework.security.oauth2.client.OAuth2AuthorizedClientManager
+import org.springframework.security.oauth2.client.OAuth2AuthorizedClientProviderBuilder
+import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository
+import org.springframework.security.oauth2.client.web.DefaultOAuth2AuthorizedClientManager
+import org.springframework.security.oauth2.client.web.OAuth2AuthorizedClientRepository
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler
 import org.springframework.web.context.request.RequestContextListener
 
 
 @Configuration
-@EnableOAuth2Client
-class WebSecurityConfiguration(@Qualifier("oauth2ClientContext") private val oauth2ClientContext: OAuth2ClientContext,
-                               private val accountService: UserService) : WebSecurityConfigurerAdapter() {
+@EnableWebSecurity
+class WebSecurityConfiguration(private val accountService: UserService) : WebSecurityConfigurerAdapter() {
+
+    @Bean
+    fun authorizedClientManager(
+            clientRegistrationRepository: ClientRegistrationRepository?,
+            authorizedClientRepository: OAuth2AuthorizedClientRepository?): OAuth2AuthorizedClientManager? {
+        val authorizedClientProvider = OAuth2AuthorizedClientProviderBuilder.builder()
+                .authorizationCode()
+                .refreshToken()
+                .clientCredentials()
+                .password()
+                .build()
+        val authorizedClientManager = DefaultOAuth2AuthorizedClientManager(
+                clientRegistrationRepository, authorizedClientRepository)
+        authorizedClientManager.setAuthorizedClientProvider(authorizedClientProvider)
+        return authorizedClientManager
+    }
 
     override fun configure(auth: AuthenticationManagerBuilder) = configure(auth) {
         userDetailsService(accountService).passwordEncoder(BCryptPasswordEncoder())
@@ -34,8 +50,8 @@ class WebSecurityConfiguration(@Qualifier("oauth2ClientContext") private val oau
                 .and().formLogin().disable()
                 .httpBasic().disable()
                 .csrf().disable()
-                .oauth2Login().redirectionEndpoint().baseUri("/oauth2/callback/*")
-                .and().successHandler(successHandler())
+                .oauth2Login().successHandler(successHandler())
+                .and().oauth2Client()
     }
 
     @Bean
@@ -47,12 +63,6 @@ class WebSecurityConfiguration(@Qualifier("oauth2ClientContext") private val oau
     @Throws(Exception::class)
     fun customAuthenticationManager(): AuthenticationManager {
         return authenticationManager()
-    }
-
-    @Bean
-    fun oauth2ClientFilterRegistration(filter: OAuth2ClientContextFilter) = FilterRegistrationBean(filter).apply {
-        this.filter = filter
-        order = -100
     }
 
     @Bean

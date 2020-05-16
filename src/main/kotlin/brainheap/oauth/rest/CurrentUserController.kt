@@ -15,7 +15,6 @@ import org.springframework.web.servlet.view.RedirectView
 
 @RestController
 class CurrentUserController(private val currentUserDetector: CurrentUserDetector) {
-    private val logger = LoggerFactory.getLogger(CurrentUserController::class.java)
 
     @GetMapping("/redirect")
     fun redirect(@RequestParam(name = "redirect_uri") redirectUri: String): RedirectView = RedirectView(redirectUri)
